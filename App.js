@@ -1,21 +1,45 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Button, Text, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-export default function App() {
+import Login from './Screens/Login.js';
+
+import Firebase from './FirebaseConfig';
+import 'firebase/auth';
+import 'firebase/database';
+
+function HomeScreen({ navigation }) {
 	return (
-		<View style={styles.container}>
-			<Text>Lol</Text>
-			<StatusBar style="auto" />
+		<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+			<Button
+				title="Settings"
+				onPress={() => navigation.navigate('Settings')}
+				Home
+			/>
 		</View>
 	);
 }
 
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: '#fff',
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
-});
+function SettingsScreen({ navigation }) {
+	return (
+		<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+			<Button title="Home" onPress={() => navigation.navigate('Home')} />
+		</View>
+	);
+}
+
+const Stack = createNativeStackNavigator();
+
+export default class App extends React.Component {
+	render() {
+		return <Login />;
+	}
+	// <NavigationContainer>
+	// 	<Stack.Navigator>
+	// 		<Stack.Screen name="Home" component={HomeScreen} />
+	// 		<Stack.Screen name="Settings" component={SettingsScreen} />
+	// 	</Stack.Navigator>
+	// </NavigationContainer
+}
