@@ -1,43 +1,37 @@
-import React from 'react';
-import {
-	View,
-	TextInput,
-	StyleSheet,
-	TouchableOpacity,
-	Text,
-} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { TextInput, Button } from 'react-native-paper';
 
-function Signup() {
-	const [name, setName] = useState('');
+function LoginScreen({ navigation }) {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
-	const [confirmPassword, setConfirmPassword] = useState('');
 
+	const firebaseSignIn = () => {
+		navigation.goBack();
+	};
 	return (
 		<View style={styles.container}>
 			<TextInput
-				style={styles.inputBox}
-				value={this.state.name}
-				onChangeText={(name) => this.setState({ name })}
-				placeholder="Full Name"
-			/>
-			<TextInput
-				style={styles.inputBox}
-				value={this.state.email}
-				onChangeText={(email) => this.setState({ email })}
-				placeholder="Email"
+				mode="outlined"
+				value={email}
+				onChangeText={(text) => setEmail(text)}
+				label="Email"
 				autoCapitalize="none"
-			/>
-			<TextInput
 				style={styles.inputBox}
-				value={this.state.password}
-				onChangeText={(password) => this.setState({ password })}
-				placeholder="Password"
-				secureTextEntry={true}
 			/>
-			<TouchableOpacity style={styles.button}>
-				<Text style={styles.buttonText}>Signup</Text>
-			</TouchableOpacity>
+
+			<TextInput
+				mode="outlined"
+				value={password}
+				onChangeText={(text) => setPassword(text)}
+				label="Password"
+				secureTextEntry={true}
+				style={styles.inputBox}
+			/>
+
+			<Button mode="contained" onPress={firebaseSignIn} style={styles.button}>
+				Sign Up
+			</Button>
 		</View>
 	);
 }
@@ -79,4 +73,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default Signup;
+export default LoginScreen;

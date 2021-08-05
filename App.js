@@ -1,45 +1,35 @@
+import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
-import { StyleSheet, Button, Text, View } from 'react-native';
+import React from 'react';
+import Styles from './ConstantStyles.js';
+import { Provider as PaperProvider } from 'react-native-paper';
+import firebaseConfig from './FirebaseConfig.js';
+import firebase from 'firebase';
+import 'firebase/auth';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import HomeScreen from './HomeScreen.js';
+import LoginScreen from './LoginScreen.js';
+import Signup from './SignUp.js';
+import LoadingScreen from './LoadingScreen.js';
 
-import Login from './Screens/Login.js';
-
-import Firebase from './FirebaseConfig';
-import 'firebase/auth';
-import 'firebase/database';
-
-function HomeScreen({ navigation }) {
-	return (
-		<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-			<Button
-				title="Settings"
-				onPress={() => navigation.navigate('Settings')}
-				Home
-			/>
-		</View>
-	);
-}
-
-function SettingsScreen({ navigation }) {
-	return (
-		<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-			<Button title="Home" onPress={() => navigation.navigate('Home')} />
-		</View>
-	);
+if (firebase.apps.length === 0) {
+	firebase.initializeApp(firebaseConfig);
 }
 
 const Stack = createNativeStackNavigator();
 
-export default class App extends React.Component {
-	render() {
-		return <Login />;
-	}
-	// <NavigationContainer>
-	// 	<Stack.Navigator>
-	// 		<Stack.Screen name="Home" component={HomeScreen} />
-	// 		<Stack.Screen name="Settings" component={SettingsScreen} />
-	// 	</Stack.Navigator>
-	// </NavigationContainer
+export default function App() {
+	return (
+		<PaperProvider>
+			<NavigationContainer>
+				<Stack.Navigator>
+					<Stack.Screen name="Home" component={HomeScreen} />
+					<Stack.Screen name="Register" component={Signup} />
+					<Stack.Screen name="Login" component={LoginScreen} />
+					<Stack.Screen name="Loading" component={LoadingScreen} />
+				</Stack.Navigator>
+			</NavigationContainer>
+		</PaperProvider>
+	);
 }
