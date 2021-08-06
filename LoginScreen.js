@@ -16,8 +16,7 @@ function LoginScreen({ navigation }) {
 				value={email}
 				onChangeText={(text) => setEmail(text)}
 				label="Email"
-				autoCapitalize="none"
-				style={styles.inputBox}
+				style={{ marginTop: 5, width: '100%' }}
 			/>
 
 			<TextInput
@@ -26,11 +25,18 @@ function LoginScreen({ navigation }) {
 				onChangeText={(text) => setPassword(text)}
 				label="Password"
 				secureTextEntry={true}
-				style={styles.inputBox}
+				style={{ width: '100%' }}
 			/>
 
 			<Button mode="contained" onPress={firebaseSignIn} style={styles.button}>
-				Sign Up
+				Log In
+			</Button>
+			<Button
+				mode="outline"
+				onPress={() => navigation.navigate('Register')}
+				style={styles.button}
+			>
+				Sign Up!
 			</Button>
 		</View>
 	);
@@ -39,37 +45,14 @@ function LoginScreen({ navigation }) {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: '#fff',
 		alignItems: 'center',
-		justifyContent: 'center',
-	},
-	inputBox: {
-		width: '85%',
-		margin: 10,
-		padding: 15,
-		fontSize: 16,
-		borderColor: '#d3d3d3',
-		borderBottomWidth: 1,
-		textAlign: 'center',
+		paddingHorizontal: 10,
 	},
 	button: {
-		marginTop: 30,
-		marginBottom: 20,
-		paddingVertical: 5,
 		alignItems: 'center',
-		backgroundColor: '#FFA611',
-		borderColor: '#FFA611',
-		borderWidth: 1,
 		borderRadius: 5,
-		width: 200,
-	},
-	buttonText: {
-		fontSize: 20,
-		fontWeight: 'bold',
-		color: '#fff',
-	},
-	buttonSignup: {
-		fontSize: 12,
+		width: '85%',
+		margin: 10,
 	},
 });
 

@@ -1,13 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import {
-	View,
-	TextInput,
-	StyleSheet,
-	TouchableOpacity,
-	Text,
-	Button,
-} from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 
+import { Button, TextInput } from 'react-native-paper';
 function Signup({ navigation }) {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
@@ -31,7 +25,6 @@ function Signup({ navigation }) {
 				value={email}
 				onChangeText={(text) => setEmail(text)}
 				placeholder="Email"
-				autoCapitalize="none"
 				style={styles.inputBox}
 			/>
 			<TextInput
@@ -44,8 +37,8 @@ function Signup({ navigation }) {
 
 			<Button
 				title="Sign Up"
-				style={styles.button}
-				onClick={firebaseSignUp}
+				onPress={firebaseSignUp}
+				mode="contained"
 				style={styles.button}
 			/>
 		</View>
@@ -55,17 +48,13 @@ function Signup({ navigation }) {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: '#fff',
-		alignItems: 'center',
-		justifyContent: 'center',
+		paddingHorizontal: 10,
 	},
 	inputBox: {
-		width: '85%',
-		margin: 10,
+		width: '100%',
+		margin: 5,
 		padding: 15,
 		fontSize: 16,
-		borderColor: '#d3d3d3',
-		borderBottomWidth: 1,
 		textAlign: 'center',
 	},
 	button: {
@@ -73,8 +62,6 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 		paddingVertical: 5,
 		alignItems: 'center',
-		backgroundColor: '#FFA611',
-		borderColor: '#FFA611',
 		borderWidth: 1,
 		borderRadius: 5,
 		width: 200,
@@ -82,7 +69,6 @@ const styles = StyleSheet.create({
 	buttonText: {
 		fontSize: 20,
 		fontWeight: 'bold',
-		color: '#fff',
 	},
 	buttonSignup: {
 		fontSize: 12,
