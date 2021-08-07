@@ -1,46 +1,100 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
-
+import React, { useState } from 'react';
+import {
+	View,
+	StyleSheet,
+	SafeAreaView,
+	Keyboard,
+	ScrollView,
+} from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
-function Signup({ navigation }) {
+import { validateUsername, removeSpaces } from './ValidationMethods.js';
+import { registration } from './FirebaseMethods.js';
+
+export default function Signup({ navigation }) {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
-	const terpmail = '@terpmail.umd.edu';
-	const umdmail = '@umd.edu';
+	const [username, setUsername] = useState('');
+	const [firstname, setFirstname] = useState('');
+	const [lastname, setLastname] = useState('');
 
-	const firebaseSignUp = () => {
-		if (email != '' && password != '') {
-			if (
-				email.substr(email.length - 17) == terpmail ||
-				email.substr(email.length - 8) == umdmail
-			) {
-			} else {
-			}
+	const handleSubmit = (u, f, l, e, p, n) => {
+		if (validateUsername(removeSpaces(u))) {
+			registration(removeSpaces(u), removeSpaces(f), removeSpaces(l), e, p, n);
 		}
 	};
 
 	return (
 		<View style={styles.container}>
-			<TextInput
-				value={email}
-				onChangeText={(text) => setEmail(text)}
-				placeholder="Email"
-				style={styles.inputBox}
-			/>
-			<TextInput
-				value={password}
-				onChangeText={(text) => setPassword(text)}
-				placeholder="Password"
-				secureTextEntry={true}
-				style={styles.inputBox}
-			/>
+			<ScrollView onBlur={Keyboard.dismiss}>
+				<TextInput
+					mode="outlined"
+					value={username}
+					onChangeText={(text) => setUsername(text)}
+					placeholder="Username"
+					style={styles.inputBox}
+				/>
 
-			<Button
-				title="Sign Up"
-				onPress={firebaseSignUp}
-				mode="contained"
-				style={styles.button}
-			/>
+				<TextInput
+					mode="outlined"
+					value={firstname}
+					onChangeText={(text) => setFirstname(text)}
+					placeholder="First Name"
+					style={styles.inputBox}
+				/>
+
+				<TextInput
+					mode="outlined"
+					value={lastname}
+					onChangeText={(text) => setLastname(text)}
+					placeholder="Last Name"
+					style={styles.inputBox}
+				/>
+
+				<TextInput
+					mode="outlined"
+					value={email}
+					onChangeText={(text) => setEmail(text)}
+					placeholder="Email"
+					style={styles.inputBox}
+				/>
+				<TextInput
+					mode="outlined"
+					value={password}
+					onChangeText={(text) => setPassword(text)}
+					placeholder="Password"
+					secureTextEntry={true}
+					style={styles.inputBox}
+				/>
+
+				<Button
+					title="Sign Up"
+					onPress={() => {
+						handleSubmit(
+							username,
+							firstname,
+							lastname,
+							email,
+							password,
+							navigation
+						);
+					}}
+					mode="contained"
+					style={styles.button}
+				>
+					Sign Up!
+				</Button>
+
+				<Button
+					style={styles.button}
+					mode="outlined"
+					title="Sign In"
+					onPress={() => {
+						navigation.navigate('Login');
+					}}
+				>
+					Sign In
+				</Button>
+			</ScrollView>
 		</View>
 	);
 }
@@ -48,31 +102,18 @@ function Signup({ navigation }) {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		paddingHorizontal: 10,
-	},
-	inputBox: {
-		width: '100%',
+		justifyContent: 'center',
+		alignItems: 'center',
 		margin: 5,
-		padding: 15,
-		fontSize: 16,
-		textAlign: 'center',
 	},
 	button: {
-		marginTop: 30,
-		marginBottom: 20,
-		paddingVertical: 5,
-		alignItems: 'center',
-		borderWidth: 1,
 		borderRadius: 5,
-		width: 200,
+		width: '90%',
+		margin: 5,
 	},
-	buttonText: {
-		fontSize: 20,
-		fontWeight: 'bold',
-	},
-	buttonSignup: {
-		fontSize: 12,
+	inputBox: {
+		width: 300,
+		margin: 5,
+		borderRadius: 5,
 	},
 });
-
-export default Signup;

@@ -1,28 +1,30 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import ProfileScreen from './ProfileScreen.js';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import React, { useEffect, useState } from 'react';
+import { Alert } from 'react-native';
+import SettingsScreen from './SettingsScreen.js';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import CategoriesScreen from './CategoriesScreen.js';
-import LoginScreen from './LoginScreen.js';
 import BrowseScreen from './BrowseScreen.js';
 import firebase from 'firebase';
 import 'firebase/auth';
+import AuthenticateScreen from './AuthenticateScreen.js';
 
-const Drawer = createDrawerNavigator();
+const Tab = createBottomTabNavigator();
 
 export default function HomeScreen({ navigation }) {
-	const isSignedIn = firebase.auth().currentUser != null;
-	return isSignedIn ? (
-		<Drawer.Navigator>
-			<Drawer.Screen name="Browse" component={BrowseScreen} />
-			<Drawer.Screen name="Categories" component={CategoriesScreen} />
-			<Drawer.Screen name="Profile" component={ProfileScreen} />
-		</Drawer.Navigator>
-	) : (
-		<Drawer.Navigator>
-			<Drawer.Screen name="Browse" component={BrowseScreen} />
-			<Drawer.Screen name="Categories" component={CategoriesScreen} />
-			<Drawer.Screen name="Login" component={LoginScreen} />
-		</Drawer.Navigator>
+	return (
+		<Tab.Navigator>
+			<Tab.Screen name="Feed" component={BrowseScreen} />
+			<Tab.Screen
+				name="Categories"
+				component={CategoriesScreen}
+				options={{ headerShown: false }}
+			/>
+			<Tab.Screen name="Inbox" component={SettingsScreen} />
+			<Tab.Screen
+				name="Account"
+				component={AuthenticateScreen}
+				options={{ headerShown: false }}
+			/>
+		</Tab.Navigator>
 	);
 }

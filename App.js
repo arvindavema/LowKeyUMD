@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Styles from './ConstantStyles.js';
 import {
 	DefaultTheme as PaperDefaultTheme,
@@ -8,23 +8,21 @@ import {
 } from 'react-native-paper';
 import firebaseConfig from './FirebaseConfig.js';
 import firebase from 'firebase';
-import 'firebase/auth';
 import {
 	NavigationContainer,
 	DefaultTheme as NavigationDefaultTheme,
 } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './HomeScreen.js';
 import LoginScreen from './LoginScreen.js';
 import Signup from './SignUp.js';
 import LoadingScreen from './LoadingScreen.js';
 import 'firebase/auth';
-
+import { Alert } from 'react-native';
 if (firebase.apps.length === 0) {
 	firebase.initializeApp(firebaseConfig);
+	console.log('Connected with Firebase');
 }
-
-const auth = firebase.auth();
 
 const CombinedDefaultTheme = {
 	...PaperDefaultTheme,
@@ -38,7 +36,7 @@ const CombinedDefaultTheme = {
 	},
 };
 
-const Stack = createNativeStackNavigator();
+const Stack = createStackNavigator();
 
 export default function App() {
 	return (
@@ -50,8 +48,6 @@ export default function App() {
 						component={HomeScreen}
 						options={{ headerShown: false }}
 					/>
-					<Stack.Screen name="Register" component={Signup} />
-					<Stack.Screen name="Login" component={LoginScreen} />
 					<Stack.Screen
 						name="Loading"
 						component={LoadingScreen}
