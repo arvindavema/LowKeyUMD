@@ -1,15 +1,12 @@
 import React, { useState } from 'react';
-import {
-	View,
-	StyleSheet,
-	SafeAreaView,
-	Keyboard,
-	ScrollView,
-} from 'react-native';
+import { View, Keyboard, ScrollView } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
-import { validateUsername, removeSpaces } from './ValidationMethods.js';
-import { registration } from './FirebaseMethods.js';
-
+import {
+	registration,
+	validateUsername,
+	removeSpaces,
+} from './FirebaseMethods.js';
+import { styles } from '../HomeTabs/CommonComponents.js';
 export default function Signup({ navigation }) {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
@@ -17,9 +14,9 @@ export default function Signup({ navigation }) {
 	const [firstname, setFirstname] = useState('');
 	const [lastname, setLastname] = useState('');
 
-	const handleSubmit = (u, f, l, e, p, n) => {
+	const handleSubmit = (u, f, l, e, p) => {
 		if (validateUsername(removeSpaces(u))) {
-			registration(removeSpaces(u), removeSpaces(f), removeSpaces(l), e, p, n);
+			registration(removeSpaces(u), removeSpaces(f), removeSpaces(l), e, p);
 		}
 	};
 
@@ -69,14 +66,7 @@ export default function Signup({ navigation }) {
 				<Button
 					title="Sign Up"
 					onPress={() => {
-						handleSubmit(
-							username,
-							firstname,
-							lastname,
-							email,
-							password,
-							navigation
-						);
+						handleSubmit(username, firstname, lastname, email, password);
 					}}
 					mode="contained"
 					style={styles.button}
@@ -98,22 +88,3 @@ export default function Signup({ navigation }) {
 		</View>
 	);
 }
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-		margin: 5,
-	},
-	button: {
-		borderRadius: 5,
-		width: '90%',
-		margin: 5,
-	},
-	inputBox: {
-		width: 300,
-		margin: 5,
-		borderRadius: 5,
-	},
-});

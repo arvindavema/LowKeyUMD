@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 const InboxScreen = () => {
 	return (
 		<View>
-			<Text>navigation stacks</Text>
+			<Text></Text>
 		</View>
 	);
 };

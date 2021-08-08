@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-const SearchScreen = () => {
+const NotificationsScreen = () => {
 	return (
 		<View>
 			<Text></Text>
@@ -9,6 +9,6 @@ const SearchScreen = () => {
 	);
 };
 
-export default SearchScreen;
+export default NotificationsScreen;
 
 const styles = StyleSheet.create({});

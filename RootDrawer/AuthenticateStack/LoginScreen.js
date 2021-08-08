@@ -1,14 +1,10 @@
-import React, { useState } from 'react';
-import {
-	View,
-	StyleSheet,
-	ScrollView,
-	Keyboard,
-	SafeAreaView,
-} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, ScrollView, Keyboard } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
 import { signIn } from './FirebaseMethods.js';
-function LoginScreen({ navigation }) {
+import { styles } from '../HomeTabs/CommonComponents.js';
+
+export default function LoginScreen({ navigation }) {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 
@@ -41,9 +37,8 @@ function LoginScreen({ navigation }) {
 				/>
 
 				<Button
-					title="sign in"
 					mode="contained"
-					onPress={() => signIn(email, password, navigation)}
+					onPress={() => signIn(email, password)}
 					style={styles.button}
 				>
 					Sign In!
@@ -53,7 +48,6 @@ function LoginScreen({ navigation }) {
 					onPress={() => {
 						navigation.navigate('Register');
 					}}
-					title="sign up"
 					style={styles.button}
 				>
 					Sign Up!
@@ -62,26 +56,3 @@ function LoginScreen({ navigation }) {
 		</View>
 	);
 }
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-
-		margin: 10,
-	},
-	button: {
-		alignItems: 'center',
-		borderRadius: 5,
-		width: '90%',
-		margin: 10,
-	},
-	inputBox: {
-		width: 300,
-		margin: 10,
-		borderRadius: 5,
-	},
-});
-
-export default LoginScreen;

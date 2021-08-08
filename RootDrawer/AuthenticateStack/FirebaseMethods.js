@@ -1,15 +1,13 @@
 import firebase from 'firebase';
 import 'firebase/firestore';
 import { Alert } from 'react-native';
-import React from 'react';
 
 export async function registration(
 	username,
 	firstname,
 	lastname,
 	email,
-	password,
-	navigation
+	password
 ) {
 	const db = firebase.firestore();
 
@@ -34,7 +32,7 @@ export async function registration(
 								terpmail: 'NA',
 							})
 							.then(() => {
-								navigation.navigate('Home');
+								alert('User successfully created');
 							})
 							.catch((err) => {
 								Alert.alert('Hmm signup failed bc a db messup');
@@ -55,12 +53,11 @@ export async function registration(
 		});
 }
 
-export async function signIn(email, password, navigation) {
+export async function signIn(email, password) {
 	firebase
 		.auth()
 		.signInWithEmailAndPassword(email, password)
 		.then((userCred) => {
-			navigation.navigate('Profile');
 			Alert.alert('Logged in');
 		})
 		.catch((err) => {
@@ -69,15 +66,47 @@ export async function signIn(email, password, navigation) {
 		});
 }
 
-export async function logout(navigation) {
+export async function logout() {
 	firebase
 		.auth()
 		.signOut()
 		.then(() => {
-			navigation.navigate('Login');
-			Alert.alert('Logged out');
+			Alert.alert('You are logged out');
 		})
 		.catch((err) => {
-			Alert.alert(err.message);
+			Alert.alert('Something went wrong while signing you out!', err.message);
 		});
+}
+
+const validUsername = /^[a-zA-Z0-9_]{1,20}$/;
+
+export function removeSpaces(str) {
+	return str.replace(/\s+/g, '');
+}
+
+export function validateTerpmail(e) {
+	if (
+		(e != null && e[0] != '' && e[1] == 'terpmail.umd.edu') ||
+		e[1] == 'umd.edu'
+	) {
+		return true;
+	}
+
+	Alert.alert(
+		'Your terpmail is your @terpmail.umd.edu OR your @umd.edu email if youre a staff member.'
+	);
+	return false;
+}
+export function validateUsername(username) {
+	u = removeSpaces(username);
+	if (u != null && username != '') {
+		result = username.match(validUsername);
+		if (result != null && result[0] != null) {
+			return true;
+		}
+	}
+	Alert.alert(
+		'username must at least 1 character long, at most 20 characters long, only consist of a-z, A-Z, and/or 0-9.'
+	);
+	return false;
 }

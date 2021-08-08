@@ -1,24 +1,23 @@
 import 'react-native-gesture-handler';
-import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import Styles from './ConstantStyles.js';
+import { Button } from 'react-native-ui-lib';
 import {
 	DefaultTheme as PaperDefaultTheme,
 	Provider as PaperProvider,
 } from 'react-native-paper';
-import firebaseConfig from './FirebaseConfig.js';
-import firebase from 'firebase';
 import {
 	NavigationContainer,
 	DefaultTheme as NavigationDefaultTheme,
 } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import HomeScreen from './HomeScreen.js';
-import LoginScreen from './LoginScreen.js';
-import Signup from './SignUp.js';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import HomeScreen from './RootDrawer/HomeScreen.js';
+import AuthenticateScreen from './RootDrawer/AuthenticateScreen.js';
 import LoadingScreen from './LoadingScreen.js';
-import 'firebase/auth';
-import { Alert } from 'react-native';
+import ProfileScreen from './RootDrawer/ProfileScreen.js';
+import SettingsScreen from './RootDrawer/SettingsScreen.js';
+import firebaseConfig from './FirebaseConfig.js';
+import firebase from 'firebase';
+
 if (firebase.apps.length === 0) {
 	firebase.initializeApp(firebaseConfig);
 	console.log('Connected with Firebase');
@@ -36,24 +35,58 @@ const CombinedDefaultTheme = {
 	},
 };
 
-const Stack = createStackNavigator();
+const AppRootDrawer = createDrawerNavigator();
 
 export default function App() {
+	const [user, setUser] = useState(firebase.auth().currentUser);
+	const [initializing, setInitializing] = useState(true);
+	const ops = {
+		headerShown: false,
+	};
+	function authStateChanged(u) {
+		setUser(u);
+		if (initializing) {
+			setInitializing(false);
+		}
+	}
+
+	useEffect(() => {
+		const subscriber = firebase.auth().onAuthStateChanged(authStateChanged);
+		return subscriber; // unsubscribe on unmount
+	});
+
+	if (initializing) return <LoadingScreen />;
+
 	return (
 		<PaperProvider theme={CombinedDefaultTheme}>
 			<NavigationContainer theme={CombinedDefaultTheme}>
-				<Stack.Navigator>
-					<Stack.Screen
-						name="Home"
-						component={HomeScreen}
-						options={{ headerShown: false }}
-					/>
-					<Stack.Screen
-						name="Loading"
-						component={LoadingScreen}
-						options={{ headerShown: false }}
-					/>
-				</Stack.Navigator>
+				{user != null ? (
+					<AppRootDrawer.Navigator>
+						<AppRootDrawer.Screen
+							name="Home"
+							component={HomeScreen}
+							options={ops}
+						/>
+						<AppRootDrawer.Screen
+							name="Profile"
+							component={ProfileScreen}
+							options={ops}
+						/>
+						<AppRootDrawer.Screen
+							name="Settings"
+							component={SettingsScreen}
+							options={ops}
+						/>
+					</AppRootDrawer.Navigator>
+				) : (
+					<AppRootDrawer.Navigator>
+						<AppRootDrawer.Screen
+							name="Authenticate"
+							component={AuthenticateScreen}
+							options={ops}
+						/>
+					</AppRootDrawer.Navigator>
+				)}
 			</NavigationContainer>
 		</PaperProvider>
 	);
