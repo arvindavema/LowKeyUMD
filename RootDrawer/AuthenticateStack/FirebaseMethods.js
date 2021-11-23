@@ -25,6 +25,8 @@ export async function registration(
 						firebase.auth().currentUser.updateProfile({
 							displayName: username
 						})
+						firebase.auth().currentUser.sendEmailVerification()
+						
 						var uid = firebase.auth().currentUser.uid
 						db.collection('users')
 							.doc(uid)
