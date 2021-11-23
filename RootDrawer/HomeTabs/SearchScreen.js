@@ -3,15 +3,29 @@ import { createStackNavigator } from '@react-navigation/stack';
 import CategoriesScreen from './SearchTabs/CategoriesScreen.js';
 import ResultListScreen from './SearchTabs/ResultListScreen.js';
 import TextbooksScreen from './SearchTabs/TextbooksScreen.js';
+import {Button} from 'react-native-paper'
+
 const SearchStack = createStackNavigator();
 
 export default function SearchScreen({ navigation }) {
+	const ops = {
+		headerLeft: () => (
+			<Button
+				icon="menu"
+				onPress={() => {
+					navigation.toggleDrawer();
+				}}
+				title="Info"
+			/>
+		),
+	};
+
 	return (
 		<SearchStack.Navigator>
 			<SearchStack.Screen
-				name={'Categories'}
+				name={'Find Stuff'}
 				component={CategoriesScreen}
-				options={{ headerShown: false }}
+				options={ops}
 			/>
 			<SearchStack.Screen
 				name={'Results'}

@@ -7,7 +7,7 @@ export function SuperIcon({ name, focused, color, size }) {
 	let n;
 	if (name === 'Feed') {
 		n = focused ? 'time-outline' : 'time';
-	} else if (name === 'Categories') {
+	} else if (name === 'Find Stuff') {
 		n = focused ? 'grid-outline' : 'grid-sharp';
 	} else if (name === 'New Post') {
 		n = focused ? 'ios-create-outline' : 'ios-create-sharp';

@@ -68,11 +68,6 @@ export default function App() {
 							options={ops}
 						/>
 						<AppRootDrawer.Screen
-							name="Profile"
-							component={ProfileScreen}
-							options={ops}
-						/>
-						<AppRootDrawer.Screen
 							name="Settings"
 							component={SettingsScreen}
 							options={ops}

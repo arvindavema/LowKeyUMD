@@ -47,7 +47,7 @@ export async function registration(
 		})
 		.catch((err) => {
 			Alert.alert(
-				'there is something wrong in reading db in signup ',
+				'there is something wrong in reading db in signup ' + err.message.toString(),
 				err.message
 			);
 		});

@@ -40,7 +40,7 @@ export default function HomeScreen({ navigation }) {
 			})}
 		>
 			<Tab.Screen name="Feed" component={FeedScreen} options={ops} />
-			<Tab.Screen name="Categories" component={SearchScreen} options={ops} />
+			
 			<Tab.Screen name="New Post" component={CreateScreen} options={ops} />
 			<Tab.Screen name="Inbox" component={InboxScreen} options={ops} />
 			<Tab.Screen

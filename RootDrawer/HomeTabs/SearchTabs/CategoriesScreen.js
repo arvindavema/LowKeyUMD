@@ -7,7 +7,7 @@ import {
 	Text,
 	StatusBar,
 } from 'react-native';
-import { Avatar, Button, Card, Title, Paragraph } from 'react-native-paper';
+import {  Card, Title, Paragraph } from 'react-native-paper';
 
 const DATA = [
 	{
@@ -17,45 +17,51 @@ const DATA = [
 	},
 	{
 		id: 2,
-		title: 'Electronics',
-		text: 'Computers, laptops, smartphones, gadgets and whatnot',
+		title: 'Housing',
+		text: 'Find houses and apartments near campus',
 	},
 	{
 		id: 3,
-		title: 'Textbooks',
+		title: 'Furniture',
+		text: 'Sell, buy, or trade sofas, mattresses, coffee tables etc...',
 	},
 	{
 		id: 4,
-		title: 'Clothing',
+		title: 'Vehicles',
+		text: 'Buy, sell, or trade your wheels. Find bikes, cars, trucks... anything with wheels',
 	},
 	{
 		id: 5,
-		title: 'Appliances',
-	},
-	{
-		id: 6,
-		title: 'Kicks',
+		title: 'Sneakers',
+		text: 'This one is for all you sneaker fiends. Find Terps nearby that want to make a sneaker exchange. ',
 	},
 ];
 
-const renderItem = ({ item }) => {
-	return (
-		<Card
-			mode="elevated"
-			elevation={5}
-			style={{ flex: 1, margin: 10, padding: 2, borderRadius: 10 }}
-		>
-			<Card.Content>
-				<Title>{item.title}</Title>
-				<Paragraph>{item.text}</Paragraph>
-			</Card.Content>
-		</Card>
-	);
-};
-
 export default function CategoriesScreen({ navigation }) {
+	const renderItem = ({ item }) => {
+		return (
+			<Card
+				mode="elevated"
+				elevation={5}
+				style={{ flex: 1, margin: 10, padding: 2, borderRadius: 10 }}
+				onPress={() => {
+					if (item.id == 1) {
+						navigation.navigate('Textbooks');
+					} else {
+						navigation.navigate('Results', { type: item.title });
+					}
+				}}
+			>
+				<Card.Content>
+					<Title>{item.title}</Title>
+					<Paragraph>{item.text}</Paragraph>
+				</Card.Content>
+			</Card>
+		);
+	};
+
 	return (
-		<SafeAreaView style={{ flex: 1, padding: 2 }}>
+		<SafeAreaView style={{ flex: 1, paddingHorizontal: 2, paddingVertical: 2 }}>
 			<FlatList
 				data={DATA}
 				renderItem={renderItem}
