@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, Keyboard } from 'react-native';
-import { TextInput, Button } from 'react-native-paper';
+import { TextInput } from 'react-native-paper';
 import { signIn } from './FirebaseMethods.js';
 import { styles } from '../HomeTabs/CommonComponents.js';
+import { Button } from 'react-native-ui-lib';
 
 export default function LoginScreen({ navigation }) {
 	const [email, setEmail] = useState('');
@@ -20,7 +21,6 @@ export default function LoginScreen({ navigation }) {
 					label="Email"
 					style={styles.inputBox}
 				/>
-
 				<TextInput
 					mode="outlined"
 					value={password}
@@ -31,21 +31,21 @@ export default function LoginScreen({ navigation }) {
 				/>
 
 				<Button
-					mode="contained"
+					backgroundColor="#ff0000"
+					label="Sign In!"
 					onPress={() => signIn(email, password)}
 					style={styles.button}
-				>
-					Sign In!
-				</Button>
+				/>
+					
 				<Button
-					mode="outline"
+					outline
+					outlineColor="#ff0000"
+					label="Sign Up!"
 					onPress={() => {
 						navigation.navigate('Register');
 					}}
 					style={styles.button}
-				>
-					Sign Up!
-				</Button>
+					/>
 			</ScrollView>
 		</View>
 	);

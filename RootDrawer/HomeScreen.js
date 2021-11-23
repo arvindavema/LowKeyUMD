@@ -1,12 +1,12 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import FeedScreen from './HomeTabs/FeedScreen.js';
+import FeedScreen from './HomeTabs/FeedStack/FeedScreen.js';
 import InboxScreen from './HomeTabs/InboxScreen.js';
 import NotificationsScreen from './HomeTabs/NotificationsScreen.js';
-import CreateScreen from './HomeTabs/CreateScreen.js';
+import CreateScreen from './HomeTabs/FeedStack/CreateScreen.js';
 import 'firebase/auth';
 
-import PostScreen from './HomeTabs/PostScreen.js';
+import PostScreen from './HomeTabs/FeedStack/PostScreen.js';
 import { SuperIcon } from './HomeTabs/CommonComponents.js';
 import { Button } from 'react-native-paper';
 import {createNativeStackNavigator} from "@react-navigation/native-stack";

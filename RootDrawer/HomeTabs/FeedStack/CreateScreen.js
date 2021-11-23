@@ -7,7 +7,7 @@ import {
 
 import {Provider} from 'react-native-paper'
 
-import styles  from './CommonComponents.js';
+import {styles}  from '../CommonComponents.js';
 import firebase from 'firebase';
 import 'firebase/firestore';
 import moment from 'moment'
@@ -93,7 +93,7 @@ export default function CreateScreen({ navigation }) {
 					maxLength={250}
 					floatOnFocus
 					multiline
-					containerStyle={{margin: 10}}
+					style={styles.inputBox}
 					value={postBody}
 					onChangeText={(text) => setPostBody(text)}
 					/>
@@ -102,7 +102,7 @@ export default function CreateScreen({ navigation }) {
 					label={"Post"} 
 					backgroundColor={"#ff0000"}
 					onPress={onSubmit}
-					contentContainerStyle={{margin: 10}}
+					style={styles.button}					
 					/>
 
 					<Button 
@@ -110,11 +110,10 @@ export default function CreateScreen({ navigation }) {
 					outlineColor={"#ff0000"}  
 					label={"Cancel"} 
 					onPress={cancelInput}
-					contentContainerStyle={{margin: 10}}
+					style={styles.button}
 					/>
-					</ScrollView>
-			
-					</TouchableWithoutFeedback>
+			</ScrollView>	
+		</TouchableWithoutFeedback>
     </KeyboardAvoidingView>
 		
 	);
