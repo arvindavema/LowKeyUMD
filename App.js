@@ -40,9 +40,7 @@ const AppRootDrawer = createDrawerNavigator();
 export default function App() {
 	const [user, setUser] = useState(firebase.auth().currentUser);
 	const [initializing, setInitializing] = useState(true);
-	const ops = {
-		headerShown: false,
-	};
+	const ops = [{headerShown: true,}, {headerShown: false}];
 	function authStateChanged(u) {
 		setUser(u);
 		if (initializing) {
@@ -65,12 +63,18 @@ export default function App() {
 						<AppRootDrawer.Screen
 							name="Home"
 							component={HomeScreen}
-							options={ops}
+							options={ops[1]}
+						/>
+					
+						<AppRootDrawer.Screen
+						name="Profile"
+						component={ProfileScreen}
+						options={ops[0]}
 						/>
 						<AppRootDrawer.Screen
-							name="Settings"
-							component={SettingsScreen}
-							options={ops}
+						name="Settings"
+						component={SettingsScreen}
+						options={ops[0]}
 						/>
 					</AppRootDrawer.Navigator>
 				) : (
@@ -78,7 +82,7 @@ export default function App() {
 						<AppRootDrawer.Screen
 							name="Authenticate"
 							component={AuthenticateScreen}
-							options={ops}
+							options={ops[1]}
 						/>
 					</AppRootDrawer.Navigator>
 				)}

@@ -10,7 +10,6 @@ import {
 } from 'react-native-ui-lib'; //eslint-disable-line
 import { styles } from './HomeTabs/CommonComponents.js';
 import { logout } from './AuthenticateStack/FirebaseMethods.js';
-import firebase from 'firebase';
 
 export default function SettingsScreen({ navigation }) {
 	return (

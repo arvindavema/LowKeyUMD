@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { View, Keyboard, ScrollView } from 'react-native';
-import { Button, TextInput } from 'react-native-paper';
+import { Button, TextInput , Text} from 'react-native-paper';
 import {
 	registration,
 	validateUsername,
+	validateTerpmail,
 	removeSpaces,
 } from './FirebaseMethods.js';
 import { styles } from '../HomeTabs/CommonComponents.js';
@@ -15,9 +16,10 @@ export default function Signup({ navigation }) {
 	const [lastname, setLastname] = useState('');
 
 	const handleSubmit = (u, f, l, e, p) => {
-		if (validateUsername(removeSpaces(u))) {
+		if(validateUsername(u) && validateTerpmail(e.split("@"))){
 			registration(removeSpaces(u), removeSpaces(f), removeSpaces(l), e, p);
-		}
+		} 
+	
 	};
 
 	return (
@@ -51,7 +53,7 @@ export default function Signup({ navigation }) {
 					mode="outlined"
 					value={email}
 					onChangeText={(text) => setEmail(text)}
-					placeholder="Email"
+					placeholder="TERPmail"
 					style={styles.inputBox}
 				/>
 				<TextInput
@@ -73,10 +75,9 @@ export default function Signup({ navigation }) {
 				>
 					Sign Up!
 				</Button>
-
+				<Text>Already have an account?</Text>
 				<Button
 					style={styles.button}
-					mode="outlined"
 					title="Sign In"
 					onPress={() => {
 						navigation.navigate('Login');

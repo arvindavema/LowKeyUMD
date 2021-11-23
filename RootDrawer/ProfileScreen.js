@@ -23,12 +23,10 @@ export default function ProfileScreen({ navigation }) {
 		<View
 			style={{
 				flex: 1,
-				justifyContent: 'center',
-				alignItems: 'center',
 				padding: 2,
 			}}
 		>
-			<Text>Profile</Text>
+			<Text>{user.email}</Text>
 		</View>
 	);
 }

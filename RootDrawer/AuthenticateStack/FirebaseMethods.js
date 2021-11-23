@@ -22,14 +22,18 @@ export async function registration(
 					.auth()
 					.createUserWithEmailAndPassword(email, password)
 					.then((user) => {
+						firebase.auth().currentUser.updateProfile({
+							displayName: username
+						})
+						var uid = firebase.auth().currentUser.uid
 						db.collection('users')
-							.doc(username)
+							.doc(uid)
 							.set({
 								lastname: lastname,
 								firstname: firstname,
 								username: username,
-								isTerp: false,
-								terpmail: 'NA',
+								terpmail: email,
+								posts: []
 							})
 							.then(() => {
 								alert('User successfully created');
@@ -72,9 +76,12 @@ export async function logout() {
 		.signOut()
 		.then(() => {
 			Alert.alert('You are logged out');
+			console.log("Succesfully logged out")
 		})
 		.catch((err) => {
-			Alert.alert('Something went wrong while signing you out!', err.message);
+			Alert.alert('Something went wrong while signing you out!');
+			console.log("SIGNOUT: " +err.message.toString());
+		
 		});
 }
 
@@ -84,24 +91,23 @@ export function removeSpaces(str) {
 	return str.replace(/\s+/g, '');
 }
 
-export function validateTerpmail(e) {
+export function validateTerpmail(email) {
 	if (
-		(e != null && e[0] != '' && e[1] == 'terpmail.umd.edu') ||
-		e[1] == 'umd.edu'
+		( email !== null && email[1] === 'terpmail.umd.edu')
 	) {
 		return true;
 	}
 
 	Alert.alert(
-		'Your terpmail is your @terpmail.umd.edu OR your @umd.edu email if youre a staff member.'
+		'Your TERPmail is your @terpmail.umd.edu. You need to use this email to gain accesss.'
 	);
 	return false;
 }
 export function validateUsername(username) {
-	u = removeSpaces(username);
-	if (u != null && username != '') {
-		result = username.match(validUsername);
-		if (result != null && result[0] != null) {
+	const u = removeSpaces(username.toString());
+	if (u !== '') {
+		var result = username.match(validUsername);
+		if (result != null && result.length > 0 && result.length < 21) {
 			return true;
 		}
 	}
@@ -110,3 +116,4 @@ export function validateUsername(username) {
 	);
 	return false;
 }
+

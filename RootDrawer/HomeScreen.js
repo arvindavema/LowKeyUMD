@@ -2,15 +2,27 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import FeedScreen from './HomeTabs/FeedScreen.js';
 import InboxScreen from './HomeTabs/InboxScreen.js';
-import SearchScreen from './HomeTabs/SearchScreen.js';
 import NotificationsScreen from './HomeTabs/NotificationsScreen.js';
 import CreateScreen from './HomeTabs/CreateScreen.js';
 import 'firebase/auth';
+
+import PostScreen from './HomeTabs/PostScreen.js';
 import { SuperIcon } from './HomeTabs/CommonComponents.js';
 import { Button } from 'react-native-paper';
+import {createNativeStackNavigator} from "@react-navigation/native-stack";
 
+const FeedStack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
+function FeedStackScreen(){
+	return(
+		<FeedStack.Navigator screenOptions={{headerShown: false,}}>
+			<FeedStack.Screen name="Main" component={FeedScreen} />
+			<FeedStack.Screen name="Post" component={PostScreen} />
+			<FeedStack.Screen name="Create" component={CreateScreen} />
+		</FeedStack.Navigator>
+	)
+}
 export default function HomeScreen({ navigation }) {
 	const ops = {
 		headerLeft: () => (
@@ -26,7 +38,7 @@ export default function HomeScreen({ navigation }) {
 	return (
 		<Tab.Navigator
 			screenOptions={({ route }) => ({
-				tabBarShowLabel: false,
+				tabBarShowLabel: true,
 				tabBarIcon: ({ focused, color, size }) => {
 					return (
 						<SuperIcon
@@ -39,9 +51,7 @@ export default function HomeScreen({ navigation }) {
 				},
 			})}
 		>
-			<Tab.Screen name="Feed" component={FeedScreen} options={ops} />
-			
-			<Tab.Screen name="New Post" component={CreateScreen} options={ops} />
+			<Tab.Screen name="Feed" component={FeedStackScreen} options={ops} />
 			<Tab.Screen name="Inbox" component={InboxScreen} options={ops} />
 			<Tab.Screen
 				name="Notifications"

@@ -12,12 +12,6 @@ export default function LoginScreen({ navigation }) {
 		<View style={styles.container}>
 			<ScrollView
 				onBlur={Keyboard.dismiss}
-				style={{
-					width: '100%',
-					height: '100%',
-					margin: 5,
-					paddingHorizontal: 10,
-				}}
 			>
 				<TextInput
 					mode="outlined"

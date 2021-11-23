@@ -1,14 +1,12 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-const PostScreen = () => {
+export default function PostScreen({navigation}){
 	return (
 		<View>
-			<Text></Text>
+			<Text>Post</Text>
 		</View>
 	);
 };
-
-export default PostScreen;
 
 const styles = StyleSheet.create({});

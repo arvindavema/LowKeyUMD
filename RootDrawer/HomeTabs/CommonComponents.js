@@ -36,22 +36,30 @@ export const Fab = ({ onTap }) => (
 
 export const styles = StyleSheet.create({
 	container: {
-		flex: 1,
+		flexDirection: 'column',
 		justifyContent: 'center',
-		alignItems: 'center',
-
-		margin: 10,
+		alignItems: 'stretch',
+		margin: 5
 	},
 	button: {
-		alignItems: 'center',
-		borderRadius: 5,
-		width: '90%',
 		margin: 10,
+		
 	},
 	inputBox: {
-		width: 300,
 		margin: 10,
-		borderRadius: 5,
 	},
-	scrollContainer: { paddingHorizontal: 2, paddingVertical: 2 },
+	inputArea:{
+		margin:10
+	},
+	scrollContainer: { 
+		paddingHorizontal: 0,
+		paddingVertical: 0 
+		},
+	fab: {
+		position: 'absolute',
+		backgroundColor: '#ff0000',
+		margin: 16,
+		right: 0,
+		bottom: 0,
+	  },
 });
