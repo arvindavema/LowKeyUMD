@@ -4,7 +4,7 @@ import firebase from 'firebase';
 import 'firebase/firestore'
 import {Button} from 'react-native-ui-lib'
 import {styles} from '../CommonComponents'
-import {  FAB,Paragraph, Dialog, Portal, Provider, Title, TextInput } from 'react-native-paper';
+import {  FAB, Paragraph, Dialog, Portal, Provider, Title, TextInput } from 'react-native-paper';
 
 
 export default function PostScreen({navigation, route}){
@@ -16,8 +16,14 @@ export default function PostScreen({navigation, route}){
 	var postRef = firebase.firestore().collection('posts').doc(postID)
 	var commentsCollection = postRef.collection('comments')
 
-	const showDialog= () => {setVisible(true)}
-	const hideDialog = () => {setVisible(false)}
+	const showDialog= () => {
+		setComment('')
+		
+		setVisible(true)
+	}
+	const hideDialog = () => {
+		setComment('')
+		setVisible(false)}
 
 	const submitComment=()=>{
 		setVisible(false)
@@ -79,9 +85,7 @@ export default function PostScreen({navigation, route}){
 					label="Comment"
 					mode="outlined"
 					value={comment}
-					onChangeText={(text) => setComment(text)}
-					style={styles.inputBox}
-					outlineColor="red"
+					onChangeText={text => setComment(text)}
 					/>
 				</Dialog.Content>
 				<Dialog.Actions>
