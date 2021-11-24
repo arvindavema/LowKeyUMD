@@ -14,6 +14,15 @@
 			"fallbackToCacheTimeout": 0
 		},
 		"assetBundlePatterns": ["**/*"],
+		"plugins":[
+			[
+				"expo-image-picker",
+				{
+					"photoPermission": "Allow LowKeyUMD to access your photos?",
+					"cameraPermission": "Allow LowKeyUMD to access your camera?"
+				}
+			]
+		],
 		"ios": {
 			"supportsTablet": true
 		},

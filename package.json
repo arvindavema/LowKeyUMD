@@ -19,6 +19,7 @@
     "@react-navigation/stack": "^6.0.1",
     "deepmerge": "^4.2.2",
     "expo": "~42.0.1",
+    "expo-clipboard": "~1.1.0",
     "expo-firebase-recaptcha": "^1.4.2",
     "expo-image-picker": "~10.2.2",
     "expo-status-bar": "~1.0.4",

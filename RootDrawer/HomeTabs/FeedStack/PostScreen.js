@@ -1,17 +1,47 @@
 import React, {useState,useEffect} from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, ScrollView, Text, View, Alert } from 'react-native';
 import firebase from 'firebase';
 import 'firebase/firestore'
+import {Button} from 'react-native-ui-lib'
+import {styles} from '../CommonComponents'
+import {  FAB,Paragraph, Dialog, Portal, Provider, Title, TextInput } from 'react-native-paper';
+
 
 export default function PostScreen({navigation, route}){
 	const [comments, setComments] = useState([])
+	const [visible, setVisible] = useState(false)
+	const [comment, setComment] = useState('')
 	const [post, setPost] = useState({})
 	const {postID} = route.params
 	var postRef = firebase.firestore().collection('posts').doc(postID)
 	var commentsCollection = postRef.collection('comments')
 
+	const showDialog= () => {setVisible(true)}
+	const hideDialog = () => {setVisible(false)}
+
+	const submitComment=()=>{
+		setVisible(false)
+		if(comment.length>0){
+			commentsCollection.add({
+				comment: comment,
+				user: firebase.auth().currentUser.uid,
+				date: new Date(),
+				liked: [],
+				hated: [],
+				karma: 0,
+			})
+			postRef.update({
+				commentCount: firebase.firestore.FieldValue.increment(1)
+			})
+			setComment('')
+		}
+	}
 	useEffect( () => {
 		const unsubscribe = commentsCollection.orderBy("created_at", "desc").onSnapshot(snapshot => {
+			postRef.get().then(doc => {
+				setPost(doc.data())
+			})
+			.catch(err => console.log(err))
 			var postComments = []
 			snapshot.forEach(doc => {
 				postComments.push({
@@ -29,14 +59,46 @@ export default function PostScreen({navigation, route}){
 	}, [])
 
 	return (
-		<View>
-			<Text>Post</Text>
+		<Provider>
+
+		<View style={styles.container}>
+			<ScrollView keyboardDismissMode={"on-drag"}>
+
+			<Button label="Back" onPress={() => navigation.goBack()} />
 			<Text>{post.username}</Text>
 			<Text>{post.body}</Text>
 			<Text>{post.created_at}</Text>
-			<Button title="Back" onPress={() => navigation.goBack()} />
+			<Text>{post.image}</Text>
+
+		</ScrollView>
+		<Portal>
+			<Dialog visible={visible} onDismiss={hideDialog}>
+				<Dialog.Title>Add Comment</Dialog.Title>
+				<Dialog.Content>
+					<TextInput
+					label="Comment"
+					mode="outlined"
+					value={comment}
+					onChangeText={(text) => setComment(text)}
+					style={styles.inputBox}
+					outlineColor="red"
+					/>
+				</Dialog.Content>
+				<Dialog.Actions>
+					<Button label="Cancel" onPress={hideDialog}/>
+					<Button label="Submit" onPress={submitComment}/>
+				</Dialog.Actions>
+			</Dialog>
+		</Portal>
+		<FAB 
+      style={styles.fab}
+       color={"#ffff"} 
+       small 
+       icon="pen" 
+       onPress={showDialog} 
+       />
 		</View>
+	</Provider>
 	);
 };
 
-const styles = StyleSheet.create({});

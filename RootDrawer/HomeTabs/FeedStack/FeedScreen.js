@@ -7,7 +7,6 @@ import 'firebase/firestore';
 import {Card, View} from 'react-native-ui-lib'
 import { Ionicons } from '@expo/vector-icons';
 
-
 export default function FeedScreen({ navigation }) {
   const db = firebase.firestore()
   const [transaction, setTransaction] = useState([])
@@ -79,9 +78,8 @@ export default function FeedScreen({ navigation }) {
     <Ionicons name="chatbox" size={16} color="grey" />
   );
 
-
   const PostCard= ({postID, username, body, created_at, likes, hates, commentCount, liked, hated}) => (
-    <Card flex style={{margin:10, padding:5}}>
+    <Card flex style={{margin:10, padding: 5}} onPress={()=> viewPost(postID)} >
       <Card.Section
       content={[{text: "@" + username + " says: ", text70: true, red10: true} , {text: body, text80: true, grey10: true} , {text: created_at, text90: true, grey10: true} ]}
       style={{padding: 10, flex: 1}}
