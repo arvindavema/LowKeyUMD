@@ -23,21 +23,23 @@ export default function CreateScreen({ navigation }) {
 		const body = postBody
 
 		if(user){
-			const date = moment().format('MMMM Do YYYY, h:mm:ss a');
+			if(user.emailVerified){
+				const date = moment().format('MMMM Do YYYY, h:mm:ss a');
 
 			db.collection('posts')
 			.add( {
 				created_at: date,
 				body: body,
 				uid: user.uid,
-				username: user.displayName, 
-				likes: 0,
-				hates: 0
+				username: user.displayName,
+				liked: [],
+				hated: [],
+				commentCount: 0
 			})
 			.then((docRef)=>{
 				db.collection("users").doc(user.uid).update({
 				posts: firebase.firestore.FieldValue.arrayUnion(docRef)
-				}).then( () => {
+				}).then(() => {
 					Alert.alert("Successfully submitted post")
 				}
 				).catch((err) => {
@@ -48,6 +50,10 @@ export default function CreateScreen({ navigation }) {
 			.catch( (err) => {
 				Alert.alert(err)
 			})
+		}else{
+			Alert.alert("Please verify your email")
+		}
+			
 		}else{
 			Alert.alert("user not signed in")
 		}

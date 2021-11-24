@@ -17,16 +17,8 @@ export default function ProfileScreen({ navigation }) {
 		return subscriber; // unsubscribe on unmount
 	}, [navigation]);
 
-	if (initializing) return null;
-
-	return (
-		<View
-			style={{
-				flex: 1,
-				padding: 2,
-			}}
-		>
-			<Text>{user.email}</Text>
-		</View>
-	);
+	return (initializing) ? null : (<View style={{flex: 1,padding: 2,}}>
+		<Text>{user.displayName}</Text>
+		<Text> Verified: {user.emailVerified.toString()} </Text>
+		</View>);
 }

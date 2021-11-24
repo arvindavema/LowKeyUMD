@@ -14,8 +14,7 @@ import { logout } from './AuthenticateStack/FirebaseMethods.js';
 export default function SettingsScreen({ navigation }) {
 	return (
 		<View style={styles.container}>
-			<Text>Settings</Text>
-			<Button onPress={logout} label="Sign Out" />
+			<Button onPress={logout} label="Sign Out" backgroundColor="#ff0000" style={styles.button}/>
 		</View>
 	);
 }

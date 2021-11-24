@@ -2,10 +2,9 @@ import firebase from 'firebase';
 import 'firebase/firestore';
 import { Alert } from 'react-native';
 
+const Blurb = (title, message) => {Alert.alert(title, message)};
 export async function registration(
 	username,
-	firstname,
-	lastname,
 	email,
 	password
 ) {
@@ -22,40 +21,38 @@ export async function registration(
 					.auth()
 					.createUserWithEmailAndPassword(email, password)
 					.then((user) => {
-						firebase.auth().currentUser.updateProfile({
-							displayName: username
+						firebase.auth().currentUser.updateProfile({	displayName: username})
+						firebase.auth().currentUser.sendEmailVerification().then(() => {
+							Alert.alert('Verification email was sent to ' + email, "Please verify your email to be get full access to your account.");
 						})
-						firebase.auth().currentUser.sendEmailVerification()
-						
-						var uid = firebase.auth().currentUser.uid
+						const uid = firebase.auth().currentUser.uid
 						db.collection('users')
 							.doc(uid)
 							.set({
-								lastname: lastname,
-								firstname: firstname,
-								username: username,
 								terpmail: email,
-								posts: []
+								username: username,
+								posts: [],
+								comments:[],
+								following: [],
+								followers: []
 							})
 							.then(() => {
-								alert('User successfully created');
+								Alert.alert('User successfully created and saved to Firebase');
 							})
 							.catch((err) => {
-								Alert.alert('Hmm signup failed bc a db messup');
+								Alert.alert('Mess up in saving user to firebase: ', err.message);
 								console.error(err.message);
 							});
 					})
 					.catch((err) => {
 						Alert.alert('Sign up failed in auth', err.message);
+						console.error(err.message);
 					});
-				Alert.alert('Bet');
+				Alert.alert('Welcome to LowKeyUMD');
 			}
 		})
 		.catch((err) => {
-			Alert.alert(
-				'there is something wrong in reading db in signup ' + err.message.toString(),
-				err.message
-			);
+			Alert.alert('there is something wrong in reading db in signup',	err.message);
 		});
 }
 
@@ -77,13 +74,12 @@ export async function logout() {
 		.auth()
 		.signOut()
 		.then(() => {
-			Alert.alert('You are logged out');
+			Alert.alert('Logged out');
 			console.log("Succesfully logged out")
 		})
 		.catch((err) => {
-			Alert.alert('Something went wrong while signing you out!');
-			console.log("SIGNOUT: " +err.message.toString());
-		
+			Alert.alert('Something went wrong while signing you out!', err.message);
+			console.log("SIGNOUT: " + err.message.toString());
 		});
 }
 
@@ -94,24 +90,26 @@ export function removeSpaces(str) {
 }
 
 export function validateTerpmail(email) {
-	if (
-		( email !== null && email[1] === 'terpmail.umd.edu')
-	) {
-		return true;
+	if(email == null  || email===""){
+		Blurb("Terpmail is required", "Please enter a valid TERPmail address");
+		return false;
+	}
+	const emailSplit = email.split('@');
+	if (emailSplit[1] !== 'terpmail.umd.edu') {
+		Blurb("Invalid TERPmail","Your TERPmail is your UMD gmail ending with \"@terpmail.umd.edu\". Please enter a valid TERPmail address");
+		return false;
 	}
 
-	Alert.alert(
-		'Your TERPmail is your @terpmail.umd.edu. You need to use this email to gain accesss.'
-	);
-	return false;
+	return true;
 }
 export function validateUsername(username) {
-	const u = removeSpaces(username.toString());
-	if (u !== '') {
+	const u = removeSpaces(username);
+	if (u.length > 0) {
 		var result = username.match(validUsername);
-		if (result != null && result.length > 0 && result.length < 21) {
-			return true;
-		}
+		return (result != null && result.length > 0 && result.length < 21) ?  true : false;
+		
+	}else{
+
 	}
 	Alert.alert(
 		'username must at least 1 character long, at most 20 characters long, only consist of a-z, A-Z, and/or 0-9.'

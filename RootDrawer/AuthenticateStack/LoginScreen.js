@@ -11,14 +11,12 @@ export default function LoginScreen({ navigation }) {
 
 	return (
 		<View style={styles.container}>
-			<ScrollView
-				onBlur={Keyboard.dismiss}
-			>
+			<ScrollView keyboardDismissMode='on-drag' bounces={true}>
 				<TextInput
 					mode="outlined"
 					value={email}
 					onChangeText={(text) => setEmail(text)}
-					label="Email"
+					label="TERPmail"
 					style={styles.inputBox}
 				/>
 				<TextInput

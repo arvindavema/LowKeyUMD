@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Keyboard, ScrollView } from 'react-native';
-import { Button, TextInput , Text} from 'react-native-paper';
+import { TextInput } from 'react-native-paper';
+import {Button,  TextField} from 'react-native-ui-lib'
 import {
 	registration,
 	validateUsername,
@@ -12,79 +13,57 @@ export default function Signup({ navigation }) {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [username, setUsername] = useState('');
-	const [firstname, setFirstname] = useState('');
-	const [lastname, setLastname] = useState('');
 
-	const handleSubmit = (u, f, l, e, p) => {
-		if(validateUsername(u) && validateTerpmail(e.split("@"))){
-			registration(removeSpaces(u), removeSpaces(f), removeSpaces(l), e, p);
-		} 
-	
+	const handleSubmit = (u, e, p) => {
+		if(validateUsername(u) && validateTerpmail(e)){
+			registration(removeSpaces(u), e, p);
+		}
 	};
 
 	return (
 		<View style={styles.container}>
-			<ScrollView onBlur={Keyboard.dismiss}>
+			<ScrollView keyboardDismissMode="on-drag" bounces={true} >
 				<TextInput
 					mode="outlined"
 					value={username}
 					onChangeText={(text) => setUsername(text)}
-					placeholder="Username"
+					label="Username"
 					style={styles.inputBox}
 				/>
 
 				<TextInput
-					mode="outlined"
-					value={firstname}
-					onChangeText={(text) => setFirstname(text)}
-					placeholder="First Name"
-					style={styles.inputBox}
-				/>
-
-				<TextInput
-					mode="outlined"
-					value={lastname}
-					onChangeText={(text) => setLastname(text)}
-					placeholder="Last Name"
-					style={styles.inputBox}
-				/>
-
-				<TextInput
+					label="TERPmail"
 					mode="outlined"
 					value={email}
 					onChangeText={(text) => setEmail(text)}
-					placeholder="TERPmail"
 					style={styles.inputBox}
 				/>
 				<TextInput
 					mode="outlined"
 					value={password}
 					onChangeText={(text) => setPassword(text)}
-					placeholder="Password"
+					label="Password"
 					secureTextEntry={true}
 					style={styles.inputBox}
 				/>
 
 				<Button
-					title="Sign Up"
+					label="Sign Up"
 					onPress={() => {
-						handleSubmit(username, firstname, lastname, email, password);
+						handleSubmit(username, email, password);
 					}}
-					mode="contained"
+					backgroundColor="#ff0000"
 					style={styles.button}
-				>
-					Sign Up!
-				</Button>
-				<Text>Already have an account?</Text>
+				/>
 				<Button
 					style={styles.button}
-					title="Sign In"
+					label="Sign In"
+					outline
+					outlineColor="#ff0000"
 					onPress={() => {
 						navigation.navigate('Login');
 					}}
-				>
-					Sign In
-				</Button>
+					/>
 			</ScrollView>
 		</View>
 	);
