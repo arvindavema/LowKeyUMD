@@ -14,13 +14,12 @@ export default function PostScreen({navigation, route}){
 	const [post, setPost] = useState({})
 	const {postID} = route.params
 	var postRef = firebase.firestore().collection('posts').doc(postID)
-	var commentsCollection = postRef.collection('comments')
 
 	const showDialog= () => {
 		setComment('')
-		
 		setVisible(true)
 	}
+
 	const hideDialog = () => {
 		setComment('')
 		setVisible(false)}
@@ -28,40 +27,61 @@ export default function PostScreen({navigation, route}){
 	const submitComment=()=>{
 		setVisible(false)
 		if(comment.length>0){
-			commentsCollection.add({
+			const newComment={
 				comment: comment,
-				user: firebase.auth().currentUser.uid,
-				date: new Date(),
+				user: firebase.auth().currentUser.displayName,
+				date: (new Date()),
 				liked: [],
 				hated: [],
 				karma: 0,
+			}
+
+			postRef
+			.update({
+				comments: firebase.firestore.FieldValue.arrayUnion(newComment)
 			})
+
 			postRef.update({
 				commentCount: firebase.firestore.FieldValue.increment(1)
 			})
 			setComment('')
 		}
 	}
-	useEffect( () => {
-		const unsubscribe = commentsCollection.orderBy("created_at", "desc").onSnapshot(snapshot => {
-			postRef.get().then(doc => {
-				setPost(doc.data())
-			})
-			.catch(err => console.log(err))
-			var postComments = []
-			snapshot.forEach(doc => {
-				postComments.push({
-					id: doc.id,
-					body: doc.data().body,
-					created_at: doc.data().created_at,
-					username: doc.data().username,
-					user_id: doc.data().user_id,
-					post_id: doc.data().post_id,
+	useEffect(() => {
+		const unsubscribe = firebase.firestore().collection('posts').doc(postID)
+		.get()
+		.then((doc)=>{
+			if(doc.exists){
+				const data = doc.data()
+				const allComments= doc.data().comments
+
+				let tempComments=[]
+				for(let c=0; c<allComments.length; c++) {
+					let curr = allComments[c]
+					let d = {comment: curr.comment,
+						karma: curr.karma,
+						date: curr.date,
+						liked: curr.liked,
+						hated: curr.hated,
+						user: curr.user,}
+					tempComments.push(d)
+				}
+
+				tempComments.sort(function(a,b){
+					return a.karma - b.karma
 				})
-			})
-			setComments(postComments)
+
+				setPost(data)
+				setComments(tempComments)
+			}else{
+				setPost(null)
+				setComments([])
+			}
+			return unsubscribe
 		})
-		return unsubscribe
+		.catch((err)=>{
+			ErrorAlert("Post Loading Error",err.message)
+		})
 	}, [])
 
 	return (
@@ -75,6 +95,10 @@ export default function PostScreen({navigation, route}){
 			<Text>{post.body}</Text>
 			<Text>{post.created_at}</Text>
 			<Text>{post.image}</Text>
+			<Text>{post.commentCount}</Text>
+			<Text>{comments.length > 0? comments[0].comment: "Empty"}</Text>
+			<Text>{comments.length > 1? comments[1].comment: "Empty"}</Text>
+
 
 		</ScrollView>
 		<Portal>

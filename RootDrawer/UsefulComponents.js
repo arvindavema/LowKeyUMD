@@ -20,3 +20,7 @@ export const UnverifiedAlert=()=>{
   LogError('Unverified!', 'Please verify your TERPmail address.')
 };
 
+export const InfoAlert=(t,m)=>{
+  Alert.alert(t,m)
+  LogInfo(t,m)
+};

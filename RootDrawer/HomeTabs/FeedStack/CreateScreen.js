@@ -109,15 +109,15 @@ export default function CreateScreen({ navigation }) {
 				image: image,
 				created_at: date,
 				body: body,
-				uid: user.uid,
 				username: user.displayName,
 				liked: [],
 				hated: [],
+				comments: [],
 				commentCount: 0
 			})
 			.then((docRef)=>{
-				db.collection("users").doc(user.uid).update({
-				posts: firebase.firestore.FieldValue.arrayUnion(docRef)
+				db.collection("users").doc(user.displayName).update({
+				posts: firebase.firestore.FieldValue.arrayUnion(docRef.id)
 				}).then(() => {
 					Alert.alert("Successfully submitted post")
 				}

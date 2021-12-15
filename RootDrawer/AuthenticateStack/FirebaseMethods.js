@@ -1,11 +1,6 @@
 import firebase from "firebase";
 import "firebase/firestore";
-import {
-  ToastMessage,
-  ErrorAlert,
-  LogError,
-  LogInfo,
-} from "../CommonComponents.js";
+import { ToastMessage, ErrorAlert, LogError } from "../UsefulComponents";
 import * as Crypto from "expo-crypto";
 
 const auth = () => {
@@ -27,50 +22,54 @@ export async function registration(username, email, password) {
         auth()
           .createUserWithEmailAndPassword(email, password)
           .then((user) => {
-           const currUser = auth().currentUser
-		   currUser.updateProfile({
-              displayName: username,
-            }).then(()=>{
-				currUser.sendEmailVerification()
-              	.then(() => {
-                	const accHash = userAccountHash(username, password);
-                	ErrorAlert("Verification email was sent to " +
-                    email +   ". Please verify your email to be get full access to your account.");
+            const currUser = auth().currentUser;
+            currUser
+              .updateProfile({
+                displayName: username,
+              })
+              .then(() => {
+                currUser.sendEmailVerification().then(() => {
+                  const accHash = userAccountHash(username, password);
+                  ErrorAlert(
+                    "Verification email was sent to " +
+                      email +
+                      ". Please verify your email to be get full access to your account."
+                  );
 
-					db()
-                  	.collection("users")
-                  	.doc(username)
-                  	.set({
-						terpmail: email,
-						username: username,
-						accountHash: accHash.toString(),
-						posts: [],
-						comments: [],
-						following: [],
-						followers: [],
-					})
-					.then(() => {
-						ToastMessage("User account successfully created!");
-					})
-					.catch((err) => {
-						ErrorAlert("User was not saved!", err.message);
-					});
-				})
-            })
-            .catch((error) => {
-				ErrorAlert("Error sending verification email.", error.message);
-            });
-        })
-        .catch((err) => {
-			ErrorAlert("Sign up failed! User was not created!", err.message);
-        });
+                  db()
+                    .collection("users")
+                    .doc(username)
+                    .set({
+                      terpmail: email,
+                      username: username,
+                      accountHash: accHash.toString(),
+                      posts: [],
+                      comments: [],
+                      following: [],
+                      followers: [],
+                    })
+                    .then(() => {
+                      ToastMessage("User account successfully created!");
+                    })
+                    .catch((err) => {
+                      ErrorAlert("User was not saved!", err.message);
+                    });
+                });
+              })
+              .catch((error) => {
+                ErrorAlert("Error sending verification email.", error.message);
+              });
+          })
+          .catch((err) => {
+            ErrorAlert("Sign up failed! User was not created!", err.message);
+          });
       }
     })
     .catch((err) => {
-    	ErrorAlert(
-        	"There is something wrong in reading db in signup!",
-        	err.message
-      	);
+      ErrorAlert(
+        "There is something wrong in reading db in signup!",
+        err.message
+      );
     });
 }
 
@@ -99,10 +98,10 @@ export async function signIn(name, password) {
         ToastMessage("Sign in failed!");
         LogError("Sign in failed!", err.message);
       });
-  } 
-  
+  }
+
   if (validateUsername(name)) {
- 	const isUser = usernameExists(name);
+    const isUser = usernameExists(name);
     if (isUser) {
       var data = null;
 
@@ -116,28 +115,20 @@ export async function signIn(name, password) {
               accountHash: doc.data().accountHash,
               terpmail: doc.data().terpmail,
             };
-			const crypt = userAccountHash(name, password);
-			if (data.accountHash == crypt) {
-				auth()
-			  	.signInWithEmailAndPassword(data.terpmail, password)
-			  	.then(() => {
-				  ToastMessage("Logged in");
-				})
-				.catch((err) => {
-					ErrorAlert("Sign in failed!", err.message);
-				});
-			
-			}else{
-				ErrorAlert("Sign in failed!", "Incorrect password!");
-			}
-          }else{
-			  ErrorAlert("User does not exist!", "We could not find a user with that username!");
-		  }
+            const crypt = userAccountHash(name, password);
+            data.accountHash == crypt
+              ? auth().signInWithEmailAndPassword(data.terpmail, password).then((res) => {  ToastMessage('Logged In!')
+            }).catch((err) => {ErrorAlert('Sign in failed!', err.message)})  : ErrorAlert("Sign in failed!", "Incorrect password!");
+          } else {
+            ErrorAlert(
+              "User does not exist!",
+              "We could not find a user with that username!"
+            );
+          }
         })
         .catch((err) => {
           ErrorAlert("Error checking username!", err.message);
         });
-     
     } else {
       ToastMessage("User does not exist.");
     }
@@ -204,6 +195,9 @@ export function validatePassword(p) {
 export async function userAccountHash(username, password) {
   var code = username.toString() + password.toString();
 
-  const result = await Crypto.digestStringAsync( Crypto.CryptoDigestAlgorithm.SHA256,code ).toString();
+  const result = await Crypto.digestStringAsync(
+    Crypto.CryptoDigestAlgorithm.SHA256,
+    code
+  ).toString();
   return result;
 }

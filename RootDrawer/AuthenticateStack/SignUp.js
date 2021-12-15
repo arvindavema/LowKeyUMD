@@ -11,7 +11,7 @@ import {
 
 } from './FirebaseMethods.js';
 import { styles } from '../HomeTabs/CommonComponents.js';
-import { ErrorAlert} from '../CommonComponents.js'
+import { ErrorAlert} from '../UsefulComponents.js'
 
 export default function Signup({ navigation }) {
 	const [email, setEmail] = useState('');
