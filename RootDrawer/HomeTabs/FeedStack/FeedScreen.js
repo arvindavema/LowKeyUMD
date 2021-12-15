@@ -7,11 +7,11 @@ import "firebase/firestore";
 import { Card, View } from "react-native-ui-lib";
 import { Ionicons } from "@expo/vector-icons";
 import {
-  ToastMessage,
-  ErrorAlert,
-  LogError,
-  LogInfo,
-} from "../../UsefulComponents.js";
+  LikeButton,
+  HateButton, 
+  DeleteButton, 
+  CommentButton
+} from '../../../Components/MyBottons.js'
 
 export default function FeedScreen({ navigation }) {
   const [transaction, setTransaction] = useState([]);
@@ -124,30 +124,23 @@ export default function FeedScreen({ navigation }) {
   //Component that returns an icon depending on btype (button type) and if the user has liked or hated the post. the data passed to this component depends on the button type. for like and hate, the list of users who liked or hated the post is passed. If  btype is comment, the number of comments for that post is passed. The username of the post author is passed if the btype is "delete".
   const PostIcon = (btype, data) => {
     const currUser = firebase.auth().currentUser;
-    return btype == "like" ? (
-      data.includes(currUser.displayName) ? (
-        //if the user's id is included in the list of users who liked the post, return an icon of a heart with a red color, else, grey
-        <Ionicons name="heart" size={20} color="red" />
-      ) : (
-        <Ionicons name="heart" size={20} color="grey" />
-      )
-    ) : btype == "hate" ? (
-      data.includes(currUser.display) ? (
-        //similar to like from above
-        <Ionicons name="heart-dislike" size={20} color="red" />
-      ) : (
-        <Ionicons name="heart-dislike" size={20} color="grey" />
-      )
-    ) : btype == "delete" ? (
-      data == firebase.auth().currentUser.displayName ? (
-        // If the user's username is the same as the post author's, then render a blue trash icon, otherwise render a noting
-        <Ionicons name="trash-outline" size={20} color="blue" />
-      ) : (
-        <Ionicons name="trash-outline" size={20} color="white" />
-      )
-    ) : (
-      <Ionicons name="chatbox" size={20} color="grey" />
-    );
+    var result = null
+    if( btype == "like"){
+        result = data.includes(currUser.displayName)
+        ? (<Ionicons name="heart" size={20} color="red" />) 
+        : (<Ionicons name="heart" size={20} color="grey" />)
+    }else if ( btype == "hate"){
+      result = (data.includes(currUser.display) 
+      ? (<Ionicons name="heart-dislike" size={20} color="red" />)
+      : ( <Ionicons name="heart-dislike" size={20} color="grey" />))
+    } else if( btype == "delete"){
+      result = (data == currUser.displayName
+        ?(<Ionicons name="trash-outline" size={20} color="blue"/>)
+        :(<Ionicons name="trash-outline" size={20} color="white"/>))
+    }else{
+      result = (<Ionicons name="chatbox" size={20} color="grey" />)
+    }
+    return result
   };
 
   const PostCard = ({
@@ -192,13 +185,7 @@ export default function FeedScreen({ navigation }) {
       />
 
       <View row left>
-        <Button
-          onPress={() => likeAction(postID)}
-          mode="text"
-          icon={() => PostIcon("like", liked)}
-        >
-          {likes}
-        </Button>
+        <LikeButton likePost={likeAction} username={currUser.displayName} liked={liked} likeCount={likes} postID={postID}/>
         <Button
           onPress={() => hateAction(postID)}
           mode="text"
@@ -214,11 +201,11 @@ export default function FeedScreen({ navigation }) {
           {commentCount}
         </Button>
         <Button
-          onPress={() => {
+          onPress={() => (
             username == currUser.displayName
               ? deleteAction(postID)
-              : null;
-          }}
+              : null
+          )}
           mode="text"
           icon={() => PostIcon("delete", username)}
         ></Button>
@@ -229,13 +216,14 @@ export default function FeedScreen({ navigation }) {
 
   //Getting all posts
   useEffect(() => {
-    const unsubscribe = firebase
+    return firebase
       .firestore()
       .collection("posts")
       .orderBy("created_at", "desc")
-      .onSnapshot((snapshot) => {
-        var posts = [];
-        snapshot.forEach((doc) => {
+      .onSnapshot(
+        (snapshot) => {
+          var posts = [];
+          snapshot.forEach((doc) => {
           const data = {
             id: doc.id,
             username: doc.data().username,
@@ -247,12 +235,10 @@ export default function FeedScreen({ navigation }) {
             body: doc.data().body,
             commentCount: doc.data().commentCount,
           };
-          console.log(data.id.toString());
           posts.push(data);
         });
         setTransaction(posts);
       });
-    return unsubscribe;
   }, []);
 
   const renderItem = ({ item }) => (

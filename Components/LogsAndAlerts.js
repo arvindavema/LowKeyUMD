@@ -1,4 +1,3 @@
-import { Alert } from 'react-native';
 import Toast from 'react-native-root-toast';
 
 export const LogError = (t, e) => {
@@ -19,7 +18,6 @@ export const ToastMessage = (message) => {
 	});
 	LogInfo(message);
 };
-
 export const ErrorAlert = (title, message) => {
 	Alert.alert(title, message);
 	LogError(title, message);

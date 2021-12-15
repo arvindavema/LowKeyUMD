@@ -4,6 +4,7 @@ import LoginScreen from './AuthenticateStack/LoginScreen.js';
 import Signup from './AuthenticateStack/SignUp.js';
 import { createStackNavigator } from '@react-navigation/stack';
 
+
 const AuthStack = createStackNavigator();
 
 export default function AuthenticateScreen({ navigation }) {
