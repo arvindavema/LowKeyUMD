@@ -1,6 +1,5 @@
 import 'react-native-gesture-handler';
 import React, { useState, useEffect } from 'react';
-import { Button } from 'react-native-ui-lib';
 import {
 	DefaultTheme as PaperDefaultTheme,
 	Provider as PaperProvider,
@@ -17,6 +16,7 @@ import ProfileScreen from './RootDrawer/ProfileScreen.js';
 import SettingsScreen from './RootDrawer/SettingsScreen.js';
 import firebaseConfig from './FirebaseConfig.js';
 import firebase from 'firebase';
+import { RootSiblingParent } from 'react-native-root-siblings';
 
 if (firebase.apps.length === 0) {
 	firebase.initializeApp(firebaseConfig);
@@ -56,6 +56,7 @@ export default function App() {
 	if (initializing) return <LoadingScreen />;
 
 	return (
+		<RootSiblingParent>
 		<PaperProvider theme={CombinedDefaultTheme}>
 			<NavigationContainer theme={CombinedDefaultTheme}>
 				{user != null ? (
@@ -88,5 +89,6 @@ export default function App() {
 				)}
 			</NavigationContainer>
 		</PaperProvider>
+		</RootSiblingParent>
 	);
 }

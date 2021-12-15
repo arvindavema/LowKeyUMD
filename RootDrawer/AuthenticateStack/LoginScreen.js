@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, ScrollView, Keyboard } from 'react-native';
+import React, { useState } from 'react';
+import { View, ScrollView } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { signIn } from './FirebaseMethods.js';
 import { styles } from '../HomeTabs/CommonComponents.js';
@@ -16,7 +16,7 @@ export default function LoginScreen({ navigation }) {
 					mode="outlined"
 					value={email}
 					onChangeText={(text) => setEmail(text)}
-					label="TERPmail"
+					label="Username or TERPmail"
 					style={styles.inputBox}
 				/>
 				<TextInput

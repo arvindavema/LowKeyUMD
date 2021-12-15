@@ -1,22 +1,69 @@
 import React, { useState } from 'react';
-import { View, Keyboard, ScrollView } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import { TextInput } from 'react-native-paper';
-import {Button,  TextField} from 'react-native-ui-lib'
+import {Button} from 'react-native-ui-lib'
 import {
 	registration,
 	validateUsername,
 	validateTerpmail,
 	removeSpaces,
+	validatePassword,
+
 } from './FirebaseMethods.js';
 import { styles } from '../HomeTabs/CommonComponents.js';
+import { ErrorAlert} from '../CommonComponents.js'
+
 export default function Signup({ navigation }) {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [username, setUsername] = useState('');
 
-	const handleSubmit = (u, e, p) => {
-		if(validateUsername(u) && validateTerpmail(e)){
-			registration(removeSpaces(u), e, p);
+	const handleSubmit = () => {
+		var errors=[]
+
+		const spaces= (i)=>{(/\s+/.test(i))}
+		const notEmpty = (i)=>{ (i != null && i.length > 0 )}
+
+
+		if(validateUsername(username) && validateTerpmail(email) && validatePassword(password)){
+			registration(username, email, password)
+		}else{
+			if(!notEmpty(email)){
+				errors.push("- Email is required")
+				setEmail("")
+			}
+			if(spaces(email)){
+				errors.push("- Email cannot contain spaces")
+				setEmail("")
+
+
+			}
+			if(!(email.split('@')[1] == "@terpmail.umd.edu" ) ){
+				errors.push("- Email must be a valid UMD TERPemail ending in @terpmail.umd.edu")
+				setEmail("")
+			}
+			if(/\W+/g.test(username)){
+				errors.push("- Username can only contain alphanumeric characters (a-z,A-Z,0-9, and _)")
+				setUsername("")
+			}
+			
+			if(!notEmpty(username)){
+				errors.push("- Username is required")
+				setUsername("")
+			}
+			
+			if(!notEmpty(password)){
+				errors.push("- Password is required")
+				setPassword("")
+			}
+			if(/\W+/g.test(password)){
+				errors.push("- Password can only contain alphanumeric characters (a-z A-Z, 0-9, and _).")
+				setPassword("")
+			}
+
+			var errorsString = errors.join("\n")
+
+			ErrorAlert("Sign Up failed:\n", errorsString)
 		}
 	};
 
@@ -26,7 +73,7 @@ export default function Signup({ navigation }) {
 				<TextInput
 					mode="outlined"
 					value={username}
-					onChangeText={(text) => setUsername(text)}
+					onChangeText={ 	setUsername		}
 					label="Username"
 					style={styles.inputBox}
 				/>
@@ -35,13 +82,13 @@ export default function Signup({ navigation }) {
 					label="TERPmail"
 					mode="outlined"
 					value={email}
-					onChangeText={(text) => setEmail(text)}
+					onChangeText={setEmail}
 					style={styles.inputBox}
 				/>
 				<TextInput
 					mode="outlined"
 					value={password}
-					onChangeText={(text) => setPassword(text)}
+					onChangeText={ setPassword	}
 					label="Password"
 					secureTextEntry={true}
 					style={styles.inputBox}
@@ -49,9 +96,7 @@ export default function Signup({ navigation }) {
 
 				<Button
 					label="Sign Up"
-					onPress={() => {
-						handleSubmit(username, email, password);
-					}}
+					onPress={handleSubmit}
 					backgroundColor="#ff0000"
 					style={styles.button}
 				/>
@@ -60,9 +105,7 @@ export default function Signup({ navigation }) {
 					label="Sign In"
 					outline
 					outlineColor="#ff0000"
-					onPress={() => {
-						navigation.navigate('Login');
-					}}
+					onPress={() => 	navigation.navigate('Login')}
 					/>
 			</ScrollView>
 		</View>
