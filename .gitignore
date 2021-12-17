@@ -1,3 +1,4 @@
+
 node_modules/
 .expo/
 .vscode/
@@ -13,4 +14,4 @@ web-build/
 # macOS
 .DS_Store
 
-FirebaseConfig.js
+
