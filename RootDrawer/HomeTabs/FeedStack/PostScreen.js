@@ -1,132 +1,215 @@
-import React, {useState,useEffect} from 'react';
-import { StyleSheet, ScrollView, Text, View, Alert } from 'react-native';
-import firebase from 'firebase';
+import React, { useState, useEffect } from 'react'
+import { ScrollView, Text, View, Alert, FlatList, SafeAreaView, StatusBar } from 'react-native'
+import firebase from 'firebase'
 import 'firebase/firestore'
-import {Button} from 'react-native-ui-lib'
-import {styles} from '../CommonComponents'
-import {  FAB, Paragraph, Dialog, Portal, Provider, Title, TextInput } from 'react-native-paper';
+import { styles } from '../../UsefulComponents.js'
+import {
+	FAB,
+	Paragraph,
+	Dialog,
+	Portal,
+	Provider,
+	Title,
+	TextInput,
+	List,
+	Card,
+	Button,
+	IconButton,
+	Colors,
+} from 'react-native-paper'
+import moment from 'moment'
 
+async function getCommentData(postID) {
+	var result = { post: {}, comments: [] }
 
-export default function PostScreen({navigation, route}){
+	firebase
+		.firestore()
+		.collection('posts')
+		.doc(postID)
+		.get()
+		.then((doc) => {
+			if (doc.exists) {
+				result.post = { author, body, createdAt, ...rest } = doc.data()
+
+				firebase
+					.firestore()
+					.collection('posts')
+					.doc(postID)
+					.collection('comments')
+					.get()
+					.then((querySnapshot) => {
+						querySnapshot.forEach((doc) => {
+							if (doc.exists) {
+								const data = { ...doc.data() }
+
+								const comm = {
+									id: doc.id,
+
+									body: data.body,
+
+									author: data.author,
+
+									authorID: data.authorID,
+
+									postID: data.postID,
+
+									createdAt: data.createdAt,
+
+									likes: data.likes,
+
+									dislikes: data.dislikes,
+
+									likeCount: data.likes.length,
+
+									dislikeCount: data.dislikes.length,
+								}
+
+								result.comments.push(comm)
+							}
+						})
+					})
+			}
+		})
+
+	return result
+}
+
+export default function PostScreen({ navigation, route }) {
 	const [comments, setComments] = useState([])
 	const [visible, setVisible] = useState(false)
-	const [comment, setComment] = useState('')
 	const [post, setPost] = useState({})
-	const {postID} = route.params
-	var postRef = firebase.firestore().collection('posts').doc(postID)
+	const [comment, setComment] = useState('')
 
-	const showDialog= () => {
+	const db = () => {
+		return firebase.firestore().collection('posts')
+	}
+	const auth = () => {
+		return firebase.auth()
+	}
+
+	const { postID, ...rest } = route.params
+
+	useEffect(() => {
+		const unsubscribe = getCommentData(postID)
+		setPost({ ...unsubscribe.post })
+		setComments(unsubscribe.comments)
+	}, [])
+
+	const showDialog = () => {
 		setComment('')
 		setVisible(true)
 	}
 
 	const hideDialog = () => {
 		setComment('')
-		setVisible(false)}
-
-	const submitComment=()=>{
 		setVisible(false)
-		if(comment.length>0){
-			const newComment={
-				comment: comment,
-				user: firebase.auth().currentUser.displayName,
-				date: (new Date()),
-				liked: [],
-				hated: [],
-				karma: 0,
-			}
-
-			postRef
-			.update({
-				comments: firebase.firestore.FieldValue.arrayUnion(newComment)
-			})
-
-			postRef.update({
-				commentCount: firebase.firestore.FieldValue.increment(1)
-			})
-			setComment('')
-		}
 	}
-	useEffect(() => {
-		const unsubscribe = firebase.firestore().collection('posts').doc(postID)
-		.get()
-		.then((doc)=>{
-			if(doc.exists){
-				const data = doc.data()
-				const allComments= doc.data().comments
 
-				let tempComments=[]
-				for(let c=0; c<allComments.length; c++) {
-					let curr = allComments[c]
-					let d = {comment: curr.comment,
-						karma: curr.karma,
-						date: curr.date,
-						liked: curr.liked,
-						hated: curr.hated,
-						user: curr.user,}
-					tempComments.push(d)
-				}
+	const submitComment = () => {
+		setVisible(false)
 
-				tempComments.sort(function(a,b){
-					return a.karma - b.karma
-				})
+		firebase
+			.firestore()
+			.collection('posts')
+			.doc(postID)
+			.collection('comments')
+			.add({
+				body: comment,
+				author: auth().currentUser.displayName,
+				authorID: auth().currentUser.uid,
+				createdAt: moment().format('MM-DD-YYYY HH:mm:ss a'),
+				postID: postID,
+				likes: [auth().currentUser.uid],
+				dislikes: [],
+				likeCount: 1,
+				dislikeCount: 0,
+			})
+			.then((docRef) => {
+				console.log('Document written with ID: ', docRef.id)
+			})
+			.catch((error) => {
+				ErrorAlert('Error adding comment: ', error.message)
+			})
+	}
 
-				setPost(data)
-				setComments(tempComments)
-			}else{
-				setPost(null)
-				setComments([])
-			}
-			return unsubscribe
-		})
-		.catch((err)=>{
-			ErrorAlert("Post Loading Error",err.message)
-		})
-	}, [])
+	const renderItem = ({ comm }) => {
+		return (
+			<Card>
+				<Card.Title title={comm.author} subtitle={createdAt} />
+
+				<Card.Content>
+					<Paragraph>
+						<Text>{comm.body}</Text>
+					</Paragraph>
+				</Card.Content>
+
+				<Card.Actions>
+					<Button>Like</Button>
+					<Button>Dislike</Button>
+					<Button>Delete</Button>
+					<Button>Reply</Button>
+				</Card.Actions>
+			</Card>
+		)
+	}
 
 	return (
 		<Provider>
+			<SafeAreaView style={styles.container}>
+				<IconButton
+					icon='camera'
+					color={Colors.red500}
+					size={20}
+					onPress={() => {
+						navigation.goBack()
+					}}
+				/>
 
-		<View style={styles.container}>
-			<ScrollView keyboardDismissMode={"on-drag"}>
+				<Card>
+					<Card.Title title='Author' subtitle='MM-DD-YYYY HH:mm a' />
+					<Card.Content>
+						<Paragraph>post.body</Paragraph>
+						<Text>post.commentCount</Text>
+					</Card.Content>
+					<Card.Actions>
+						<Button>Refresh</Button>
+					</Card.Actions>
+				</Card>
 
-			<Button label="Back" onPress={() => navigation.goBack()} />
-			<Text>{post.username}</Text>
-			<Text>{post.body}</Text>
-			<Text>{post.created_at}</Text>
-			<Text>{post.image}</Text>
-			<Text>{post.commentCount}</Text>
-			<Text>{comments.length > 0? comments[0].comment: "Empty"}</Text>
-			<Text>{comments.length > 1? comments[1].comment: "Empty"}</Text>
-
-
-		</ScrollView>
-		<Portal>
-			<Dialog visible={visible} onDismiss={hideDialog}>
-				<Dialog.Title>Add Comment</Dialog.Title>
-				<Dialog.Content>
-					<TextInput
-					label="Comment"
-					mode="outlined"
-					value={comment}
-					onChangeText={text => setComment(text)}
-					/>
-				</Dialog.Content>
-				<Dialog.Actions>
-					<Button label="Cancel" onPress={hideDialog}/>
-					<Button label="Submit" onPress={submitComment}/>
-				</Dialog.Actions>
-			</Dialog>
-		</Portal>
-		<FAB 
-      style={styles.fab}
-       color={"#ffff"} 
-       small 
-       icon="pen" 
-       onPress={showDialog} 
-       />
-		</View>
-	</Provider>
-	);
-};
-
+				<FlatList data={comments} renderItem={(item) => renderItem(item)} keyExtractor={(item) => item.id} />
+				<Portal>
+					<Dialog visible={visible} onDismiss={hideDialog}>
+						<Dialog.Title>Add Comment</Dialog.Title>
+						<Dialog.Content>
+							<TextInput
+								label='Comment'
+								mode='outlined'
+								value={comment}
+								onChangeText={(text) => setComment(text)}
+							/>
+						</Dialog.Content>
+						<Dialog.Actions>
+							<Button
+								icon='camera'
+								mode='text'
+								onPress={() => {
+									hideDialog()
+								}}>
+								Cancel
+							</Button>
+							<Button
+								icon='camera'
+								mode='text'
+								onPress={() => {
+									submitComment()
+								}}>
+								Submit
+							</Button>
+						</Dialog.Actions>
+					</Dialog>
+				</Portal>
+				<FAB style={styles.fab} color={'#ffff'} small icon='pen' onPress={showDialog} />
+			</SafeAreaView>
+		</Provider>
+	)
+}

@@ -1,15 +1,20 @@
-import React, { useState, useEffect } from 'react'
-import { SafeAreaView, FlatList, Alert } from 'react-native'
-import { styles } from '../CommonComponents'
-import { FAB, Button } from 'react-native-paper'
+import React, {useState, useEffect} from 'react'
+import {SafeAreaView, FlatList, Alert} from 'react-native'
+import {styles} from '../CommonComponents'
+import { Button, FAB } from 'react-native-paper'
 import firebase from 'firebase'
 import 'firebase/firestore'
-import { Card, View } from 'react-native-ui-lib'
-
-import { SuperIcon } from '../icons/CustomIcons.js'
-function PostIcon({ btype, data }) {
+import {
+	Card,
+	View,
+	PanningProvider,
+	Constants,
+	Dialog,
+	Colors
+} from 'react-native-ui-lib'
+import {SuperIcon} from '../icons/CustomIcons.js'
+function PostIcon({btype, data}) {
 	var color = 'grey'
-
 	let currName = firebase.auth().currentUser.displayName
 	if (data == null || btype == null || btype == 'comments') {
 		color = 'grey'
@@ -20,7 +25,6 @@ function PostIcon({ btype, data }) {
 				break
 			case 'delete':
 				color = data != currName ? 'white' : 'grey'
-
 				break
 			case 'like':
 			case 'dislike':
@@ -31,18 +35,20 @@ function PostIcon({ btype, data }) {
 				break
 		}
 	}
-	console.log('icon: ' + btype)
-
 	return <SuperIcon focused={true} name={btype} size={24} color={color} />
 }
 
-export default function FeedScreen({ navigation }) {
-	const [transaction, setTransaction] = useState([])
-	const user = firebase.auth().currentUser
+export default function FeedScreen({navigation}) {
+	const [ feed, setFeed ] = useState({})
+
+	const auth = firebase.auth()
+	const user = auth.currentUser
 	const currName = user ? user.displayName : ''
+	const db = firebase.firestore()
+	const postsRef = db.collection('posts')
 
 	const viewPost = (postID) => {
-		navigation.navigate('Post', { postID: postID })
+		navigation.navigate('Post', {postID: postID})
 	}
 
 	const deleteAction = (postID) => {
@@ -53,80 +59,72 @@ export default function FeedScreen({ navigation }) {
 				{
 					text: 'Cancel',
 					onPress: () => console.log('Cancel Pressed'),
-					style: 'cancel',
+					style: 'cancel'
 				},
 				{
 					text: 'OK',
 					onPress: () => {
-						firebase
-							.firestore()
-							.collection('posts')
-							.doc(postID)
+						postsRef
+							.doc( postID )
 							.delete()
 							.then(() => {
-								const username =
-									firebase.auth().currentUser.displayName
-								firebase
-									.firestore()
-									.collection('users')
-									.doc(username)
+								db.collection('users')
+									.doc(currName)
 									.update({
 										posts: firebase.firestore.FieldValue.arrayRemove(
-											postID.toString()
-										),
+											postID
+										)
 									})
-
 								Alert.alert(
 									'Post deleted',
 									'Post deleted successfully'
 								)
 							})
 							.catch((err) => {
-								ErrorAlert('Post Delete error', err.message)
+								Alert.alert('Post Delete error', err.message)
 							})
-					},
-				},
+					}
+				}
 			],
-			{ cancelable: false }
+			{cancelable: false}
 		)
 	}
 
 	const likeAction = (postID) => {
-		var postRef = firebase.firestore().collection('posts').doc(postID)
-		const currName = firebase.auth().currentUser.displayName
-		postRef
+		firebase.firestore().collection('posts')
+			.doc( postID )
 			.get()
 			.then((doc) => {
 				if (doc.exists) {
 					if (doc.data().likes.includes(currName)) {
-						postRef.update({
-							likes: firebase.firestore.FieldValue.arrayRemove(
-								currName
-							),
-							likeCount:
-								firebase.firestore.FieldValue.increment(-1),
-						})
+						firebase
+							.firestore()
+							.collection('posts')
+							.doc(postID)
+							.update({
+								likes: firebase.firestore.FieldValue.arrayRemove(currName),
+								likeCount: firebase.firestore.FieldValue.increment(-1)
+							})
 					} else {
-						postRef.update({
-							likes: firebase.firestore.FieldValue.arrayUnion(
-								currName
-							),
-							likeCount:
-								firebase.firestore.FieldValue.increment(1),
-						})
+						firebase
+							.firestore()
+							.collection('posts')
+							.doc(postID)
+							.update({
+								likes: firebase.firestore.FieldValue.arrayUnion(currName),
+								likeCount: firebase.firestore.FieldValue.increment(1)
+							})
 					}
 					if (doc.data().dislikes.includes(currName)) {
-						postRef.update({
-							dislikes:
-								firebase.firestore.FieldValue.arrayRemove(
-									currName
-								),
-							dislikeCount:
-								firebase.firestore.FieldValue.increment(-1),
-						})
+						firebase
+							.firestore()
+							.collection('posts')
+							.doc(postID)
+							.update({
+								dislikes: firebase.firestore.FieldValue.arrayRemove(currName),
+								dislikeCount: firebase.firestore.FieldValue.increment(-1)
+							})
 					}
-				} else {
-					console.log('No such document!')
 				}
 			})
 			.catch((error) => {
@@ -136,43 +134,42 @@ export default function FeedScreen({ navigation }) {
 
 	//Action when hate button is clicked. It will remove the user from the liked list and add it to the hated list by acessing the firestore database
 	const hateAction = (postID) => {
-		var postRef = firebase.firestore().collection('posts').doc(postID)
-
-		postRef
+		firebase
+			.firestore()
+			.collection('posts')
+			.doc(postID)
 			.get()
 			.then((doc) => {
 				if (doc.exists) {
 					if (doc.data().dislikes.includes(currName)) {
-						postRef.update({
-							dislikes:
-								firebase.firestore.FieldValue.arrayRemove(
-									currName
-								),
-							dislikeCount:
-								firebase.firestore.FieldValue.increment(-1),
-						})
+						firebase
+							.firestore()
+							.collection('posts')
+							.doc(postID)
+							.update({
+								dislikes: firebase.firestore.FieldValue.arrayRemove(currName),
+								dislikeCount: firebase.firestore.FieldValue.increment(-1)
+							})
 					} else {
-						postRef.update({
-							dislikes:
-								firebase.firestore.FieldValue.arrayUnion(
-									currName
-								),
-							dislikeCount:
-								firebase.firestore.FieldValue.increment(1),
-						})
+						firebase
+							.firestore()
+							.collection('posts')
+							.doc(postID)
+							.update({
+								dislikes: firebase.firestore.FieldValue.arrayUnion(currName),
+								dislikeCount: firebase.firestore.FieldValue.increment(1)
+							})
 					}
-
 					if (doc.data().likes.includes(currName)) {
-						postRef.update({
-							likes: firebase.firestore.FieldValue.arrayRemove(
-								currName
-							),
-							likeCount:
-								firebase.firestore.FieldValue.increment(-1),
-						})
+						firebase
+							.firestore()
+							.collection('posts')
+							.doc(postID)
+							.update({
+								likes: firebase.firestore.FieldValue.arrayRemove(currName),
+								likeCount: firebase.firestore.FieldValue.increment(-1)
+							})
 					}
-
-					console.log('no such document')
 				}
 			})
 			.catch((error) => {
@@ -183,120 +180,127 @@ export default function FeedScreen({ navigation }) {
 	//Component that returns an icon depending on btype (button type) and if the user has liked or hated the post. the data passed to this component depends on the button type. for like and hate, the list of users who liked or hated the post is passed. If  btype is comment, the number of comments for that post is passed. The username of the post author is passed if the btype is "delete".
 
 	const getIcon = (btype, data) => <PostIcon btype={btype} data={data} />
+
 	const PostCard = ({
 		postID,
-		username,
+		author,
 		body,
 		likeCount,
 		dislikeCount,
 		created_at,
 		commentCount,
 		likes,
-		dislikes,
-	}) => {
-		return (
-			<Card
+		dislikes
+	} ) =>
+	{
+		return <Card
 				flex
-				style={{ margin: 10, padding: 5 }}
-				onPress={() => viewPost(postID)}>
+				style={styles.container}
+			onPress={ () =>
+			{
+				viewPost( postID )
+			}}
+			>
 				<Card.Section
-					content={[
-						{ text: `@${username}`, text40: true, red20: true },
-					]}
+					content={[{text: `@${author}`, text40: true, red20: true}]}
 					style={{
 						flex: 1,
-						margin: 5,
+						margin: 5
 					}}
 				/>
 
 				<Card.Section
-					content={[{ text: body, text30L: true, grey10: true }]}
+					content={[{text: body, text30L: true, grey10: true}]}
 					style={{
 						flex: 1,
 						margin: 5,
-						padding: 10,
+						padding: 10
 					}}
 				/>
 				<Card.Section
 					left
-					content={[
-						{ text: created_at, text80L: true, grey20: true },
-					]}
+					content={[{text: created_at, text80L: true, grey20: true}]}
 					style={{
 						flex: 1,
 						margin: 5,
-						marginBottom: 20,
+						marginBottom: 20
 					}}
 				/>
 
 				<View row right>
 					<Button
-						onPress={() => likeAction(postID)}
+						onPress={() => likeAction(postID) }
 						mode='text'
-						icon={() => getIcon('like', likes)}>
+						icon={() => getIcon('like', likes)}
+					>
 						{likeCount}
 					</Button>
+
 					<Button
 						onPress={() => hateAction(postID)}
 						mode='text'
-						icon={() => getIcon('dislike', dislikes)}>
+						icon={() => getIcon('dislike', dislikes)}
+					>
 						{dislikeCount}
 					</Button>
 					<Button
 						onPress={() => viewPost(postID)}
 						mode='text'
-						icon={() => getIcon('comments', [])}>
+						icon={() => getIcon('comments', [])}
+					>
 						{commentCount}
 					</Button>
+
 					<Button
-						onPress={() => {
-							if (currName == username) {
-								deleteAction(postID)
-							} else {
-								Alert.alert(
-									'Wait a second!',
-									'You dont have permission to do that!'
-								)
-							}
-						}}
-						mode='text'
-						icon={() => getIcon('delete', username)}></Button>
+					onPress={ () => deleteAction( postID ) }
+					mode='text'
+					icon={() => getIcon('delete', author)}>
+					</Button>
 				</View>
 			</Card>
-		)
 	}
 
 	//Getting all posts
 	useEffect(() => {
-		return firebase
+		firebase
 			.firestore()
-			.collection('posts')
+			.collection( 'posts' )
 			.orderBy('created_at', 'desc')
-			.onSnapshot((snapshot) => {
-				var posts = []
-				snapshot.forEach((doc) => {
-					const data = {
-						id: doc.id,
-						username: doc.data().author,
-						likeCount: doc.data().likeCount,
-						dislikeCount: doc.data().dislikeCount,
-						likes: doc.data().likes,
-						dislikes: doc.data().dislikes,
-						created_at: doc.data().created_at,
-						body: doc.data().body,
-						comments: doc.data().comments,
-						commentCount: doc.data().commentCount,
+			.get()
+			.then((snapshot) => {
+				const posts = []
+				var i = 0
+				snapshot.forEach(doc => {
+					const data = doc.data()
+					const item = {
+						key: i.toString(),
+						postID: data.postID,
+						body: data.body,
+						likes: data.likes,
+						dislikes: data.dislikes,
+						commentCount: data.commentCount,
+						created_at: data.created_at,
+						likeCount: data.likeCount,
+						author: data.author,
+						dislikeCount: data.dislikeCount
 					}
-					posts.push(data)
+					posts.push( item )
+					i++
 				})
-				setTransaction(posts)
+				setFeed( posts )
+				console.log(feed)
+			})
+			.catch( ( err ) =>
+			{
+				Alert.alert('FEED SCREEN: ', err.message)
 			})
 	}, [])
 
-	const renderItem = ({ item }) => (
+	const renderItem = ({item}) => (
 		<PostCard
-			postID={item.id}
-			username={item.username}
+			key={ item.key }
+			postID={item.postID}
+			author={item.author}
 			body={item.body}
 			created_at={item.created_at}
 			likeCount={item.likeCount}
@@ -310,10 +314,11 @@ export default function FeedScreen({ navigation }) {
 	return (
 		<SafeAreaView style={styles.container}>
 			<FlatList
-				data={transaction}
+				data={feed}
 				renderItem={renderItem}
-				keyExtractor={(item) => item.id}
+				keyExtractor={(item)=> item.key}
 			/>
+
 			<FAB
 				style={styles.fab}
 				color={'#ffff'}

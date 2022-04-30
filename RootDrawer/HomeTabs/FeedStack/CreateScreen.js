@@ -17,22 +17,27 @@ import { styles } from '../CommonComponents.js'
 import firebase from 'firebase'
 import 'firebase/firestore'
 import moment from 'moment'
+import { ErrorAlert } from '../../UsefulComponents.js'
 
 export default function CreateScreen({ navigation }) {
 	const [postBody, setPostBody] = useState('')
 
-	const savePost = () => {
-		const db = firebase.firestore()
-		var user = firebase.auth().currentUser
-		const body = postBody
+	const db = () => firebase.firestore()
+	const user = () => firebase.auth().currentUser
 
+	const savePost = () => {
+		const body = postBody
 		const date = moment().format('MMMM Do YYYY, h:mm:ss a')
 
-		db.collection('posts')
+		firebase
+			.firestore()
+			.collection('posts')
 			.add({
-				created_at: date,
+				created_at: moment().format('MMMM Do YYYY, h:mm:ss a'),
 				body: body,
+				postID: '',
 				author: user.displayName,
+				authorID: user.uid,
 				likes: [],
 				dislikes: [],
 				comments: [],
@@ -42,23 +47,33 @@ export default function CreateScreen({ navigation }) {
 				karma: 0,
 			})
 			.then((docRef) => {
-				db.collection('users')
-					.doc(user)
+				const docID = docRef.id
+				db.collection('posts')
+					.doc(docID)
 					.update({
-						posts: firebase.firestore.FieldValue.arrayUnion(
-							docRef.id
-						),
+						postID: docID,
 					})
 					.then(() => {
-						Alert.alert('Successfully submitted post')
+						db.collection('users')
+							.doc(user.displayName)
+							.update({
+								posts: firebase.firestore.FieldValue.arrayUnion(docID),
+							})
+							.then(() => {
+								ToastMessage('Added POST to users data')
+							})
+							.catch((err) => {
+								ErrorAlert('Faild to add post to users data', err.message)
+							})
 					})
 					.catch((err) => {
-						Alert.alert('something happened while saving this post')
-						console.log(err)
+						ErrorAlert('Faild to add post to users data', err.message)
+						console.error(err)
 					})
 			})
 			.catch((err) => {
-				Alert.alert(err)
+				ErrorAlert('Faild to add post to users data', err.message)
+				console.error(err)
 			})
 	}
 
@@ -68,44 +83,26 @@ export default function CreateScreen({ navigation }) {
 	}
 
 	const postInput = () => {
-		console.log('Submit Pressed: ' + postBody)
+		console.log('Submit Pressed: \n\n' + postBody + '\n\n')
 		savePost()
 		navigation.goBack()
 	}
 
 	const onSubmit = () => {
-		if (postBody !== '') {
-			Alert.alert(
-				'New Post',
-				'Are you sure you want to Submit your post: ' +
-					postBody.toString(),
-				[
-					{ text: 'Cancel', onPress: () => cancelInput() },
-					{ text: 'OK', onPress: () => postInput() },
-				]
-			)
+		if (postBody != '') {
+			Alert.alert('New Post:', `Are you sure you want to Submit your post: ${postBody}`, [
+				{ text: 'Cancel', onPress: () => cancelInput() },
+				{ text: 'OK', onPress: () => postInput() },
+			])
 		} else {
-			Alert.alert('Uh Oh!', 'Post can not be empty!')
+			ToastMessage('Post body required.')
 		}
 	}
 
 	return (
-		<KeyboardAvoidingView
-			behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-			style={{ flex: 1 }}>
+		<KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
 			<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 				<ScrollView keyboardDismissMode='on-drag'>
-					{/* <TextField
-           			showCharacterCounter
-            		placeholder={"Post Body"}
-					floatingPlaceholder
-					maxLength={250}
-					floatOnFocus
-					multiline
-					style={styles.inputBox}
-					value={postBody}
-					onChangeText={(text) => setPostBody(text)}
-					/> */}
 					<Title
 						style={{
 							marginTop: 10,
@@ -125,12 +122,7 @@ export default function CreateScreen({ navigation }) {
 						onChangeText={(text) => setPostBody(text)}
 					/>
 
-					<Button
-						label={'Post'}
-						backgroundColor={'#ff0000'}
-						onPress={onSubmit}
-						style={styles.button}
-					/>
+					<Button label={'Post'} backgroundColor={'#ff0000'} onPress={onSubmit} style={styles.button} />
 
 					<Button
 						outline

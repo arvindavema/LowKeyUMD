@@ -5,14 +5,13 @@
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyBQgyXXJUpLxQuhyIJ8GuH-J9f2v8Q7dDY",
-  authDomain: "collegemarket.firebaseapp.com",
-  databaseURL: "https://collegemarket-default-rtdb.firebaseio.com",
-  projectId: "collegemarket",
-  storageBucket: "collegemarket.appspot.com",
-  messagingSenderId: "960227739745",
-  appId: "1:960227739745:web:19c1c3241263d74f5d0220",
-  measurementId: "G-48L99FFH5L"
-};
+	apiKey: 'AIzaSyAOFFTEB6dLb5Nv8Rd0T5cloy0RjeznXGE',
+	authDomain: 'lowkeyumd.firebaseapp.com',
+	databaseURL: 'https://lowkeyumd-default-rtdb.firebaseio.com',
+	projectId: 'lowkeyumd',
+	storageBucket: 'lowkeyumd.appspot.com',
+	messagingSenderId: '485813604047',
+	appId: '1:485813604047:web:c6266b8275579f9b1db1ba',
+}
 
-export default firebaseConfig;
+export default firebaseConfig
