@@ -8,8 +8,8 @@ Upon registration, they recieve an email verification to the provided TERPmail a
 The registration only asks for username, terpmail, and a password. No other data is required and every TERPmail address is only allowed 1 account. 
 
 <p float="left">
-<img src="./lowkeyImages/login.PNG" alt="login" width="100"/>
-<img src="./lowkeyImages/terpsregister.PNG" alt="register" width="100"/>
+<img src="./lowkeyImages/login.PNG" alt="login" width="150"/>
+<img src="./lowkeyImages/terpsregister.PNG" alt="register" width="150"/>
 </p>
 
 ## Storage
@@ -18,9 +18,9 @@ Firebase Firestore is used to store data about the users and any content and pos
 ### Heres how a typical feed would look like:
 
 <p float="left">
- <img src="./lowkeyImages/terpspost.PNG" alt="login" width="100"/>
- <img src="./lowkeyImages/terpsresult.PNG" alt="register" width="100"/>
- <img src="./lowkeyImages/terpsfeed.PNG" alt="login" width="100"/>
+ <img src="./lowkeyImages/terpspost.PNG" alt="login" width="150"/>
+ <img src="./lowkeyImages/terpsresult.PNG" alt="register" width="150"/>
+ <img src="./lowkeyImages/terpsfeed.PNG" alt="login" width="150"/>
 </p>
 
 ### TODO
