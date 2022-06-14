@@ -8,6 +8,7 @@ Authentication is done using Firebase Authentication. All user accounts are crea
 Upon registration, they recieve an email verification to the provided TERPmail at Sign Up. Once they verify their email, they are granted access to the app. 
 The registration only asks for username, terpmail, and a password. No other data is required and every TERPmail address is only allowed 1 account. 
 
+<img src="./lowkeyImages/login.PNG" alt="drawing" width="200"/>
 
 ![Login](./lowkeyImages/login.PNG)
 
