@@ -22,3 +22,6 @@ Firebase Firestore is used to store data about the users and any content and pos
  <img src="./lowkeyImages/terpsresult.PNG" alt="register" width="100"/>
  <img src="./lowkeyImages/terpsfeed.PNG" alt="login" width="100"/>
 </p>
+
+### TODO
+I need to implement the bottom three tabs still, I havent gotten aroud to it because of school but the trending tab is for posts that are gaining the most likes per hour, bookmarks is for posts the user wants to save for later, and notifications is for recieved notifications about interactions with their posts such as likes and comments from other users.
