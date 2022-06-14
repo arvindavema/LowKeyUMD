@@ -9,7 +9,7 @@ Upon registration, they recieve an email verification to the provided TERPmail a
 The registration only asks for username, terpmail, and a password. No other data is required and every TERPmail address is only allowed 1 account. 
 
 
-![Login](./lowkeyImages/login.png)
+![Login](./lowkeyImages/login.PNG)
 
 ## Storage
 Firebase Firestore is used to store data about the users and any content and posts they create or interact with. Posts and their content, including their like and dislike counts are stored in firestore and when it is time to render the feed, the app fetches the latest posts and displays the data on the feed screen.
