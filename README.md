@@ -1,7 +1,6 @@
 ﻿# LowKeyUMD
  ## Overview
-This is a react native mobile app allows only UMD students to post anonymous posts that are visible to everyone. However, everyone remains anonymous unless they choose an obvious username. The application is almost done, with some minor cosmetic details requiring my attention. Other than that, the application works as well as twitter.
- 
+This is a react native mobile app allows only UMD students to post anonymous posts that are visible to everyone. However, everyone remains anonymous unless they choose an obvious username. The application is almost done, with some minor cosmetic details requiring my attention. Other than that, the application works as well as twitter. 
  
 ## Authentication
 Authentication is done using Firebase Authentication. All user accounts are created as email/password accounts, and only students with a TERPmail can create an account with this app. 
@@ -19,7 +18,7 @@ Firebase Firestore is used to store data about the users and any content and pos
 ### Heres how a typical feed would look like:
 
 <p float="left">
-<img src="./lowkeyImages/terpspost.PNG" alt="login" width="100"/>
-<img src="./lowkeyImages/terpsresult.PNG" alt="register" width="100"/>
-<img src="./lowkeyImages/terpsfeed.PNG" alt="login" width="100"/>
+ <img src="./lowkeyImages/terpspost.PNG" alt="login" width="100"/>
+ <img src="./lowkeyImages/terpsresult.PNG" alt="register" width="100"/>
+ <img src="./lowkeyImages/terpsfeed.PNG" alt="login" width="100"/>
 </p>
